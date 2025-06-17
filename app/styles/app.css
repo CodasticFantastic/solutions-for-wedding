@@ -164,13 +164,13 @@ button.reset:hover:not(:has(> *)) {
 */
 .header {
   align-items: center;
-  background: #fff;
+  /* background: #fff; */
   display: flex;
   height: var(--header-height);
   padding: 0 1rem;
-  position: sticky;
-  top: 0;
-  z-index: 1;
+  /* position: sticky; */
+  /* top: 0; */
+  /* z-index: 1; */
 }
 
 .header-menu-mobile-toggle {
@@ -209,7 +209,6 @@ button.reset:hover:not(:has(> *)) {
 .header-ctas > * {
   min-width: fit-content;
 }
-
 
 /*
 * --------------------------------------------------

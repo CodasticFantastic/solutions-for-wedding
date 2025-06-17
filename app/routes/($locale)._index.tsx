@@ -1,22 +1,22 @@
-import {type LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import {useLoaderData, type MetaFunction} from 'react-router';
-import {getPaginationVariables, Image} from '@shopify/hydrogen';
+import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
+import {useLoaderData, type MetaFunction} from 'react-router'
+import {getPaginationVariables, Image} from '@shopify/hydrogen'
 
-import {ProductList} from '~/components/custom/ProductList';
-import {ALL_PRODUCTS_QUERY} from '~/graphql/storefront/queries/allProducts.query';
+import {ProductList} from '~/components/custom/ProductList'
+import {ALL_PRODUCTS_QUERY} from '~/graphql/storefront/queries/allProducts.query'
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Home | Solutions for wedding'}];
-};
+  return [{title: 'Home | Solutions for wedding'}]
+}
 
 export async function loader(args: LoaderFunctionArgs) {
   // Start fetching non-critical data without blocking time to first byte
-  const deferredData = loadDeferredData(args);
+  const deferredData = loadDeferredData(args)
 
   // Await the critical data required to render initial state of the page
   // const criticalData = await loadCriticalData(args);
 
-  return {...deferredData};
+  return {...deferredData}
 }
 
 /**
@@ -37,37 +37,36 @@ export async function loader(args: LoaderFunctionArgs) {
 function loadDeferredData({context, request}: LoaderFunctionArgs) {
   const paginationVariables = getPaginationVariables(request, {
     pageBy: 6,
-  });
+  })
 
   const recommendedProducts = context.storefront
     .query(ALL_PRODUCTS_QUERY, {variables: paginationVariables})
     .catch((error) => {
-      console.error('[RECOMMENDED_PRODUCTS]', error);
-      return null;
-    });
+      console.error('[ALL_PRODUCTS_QUERY]', error)
+      return null
+    })
 
   return {
     recommendedProducts,
-  };
+  }
 }
 
 export default function Homepage() {
-  const data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>()
   return (
-    <main className="bg-white min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-center text-gray-900">
+    <main className="bg-bg-primary min-h-screen">
+      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <h1 className="text-center text-4xl font-bold text-gray-900">
           Witaj w sklepie z panelami akrylowymi
         </h1>
-        <p className="mt-4 text-gray-600 mx-auto text-center">
-          Zaprojektuj swój własny panel lub wybierz gotowy szablon.
-          Personalizacja? Mamy to.
+        <p className="mx-auto mt-4 text-center text-gray-600">
+          Zaprojektuj swój własny panel lub wybierz gotowy szablon. Personalizacja? Mamy to.
         </p>
       </div>
 
-      <section className="px-2 sm:px-6 lg:px-8">
+      <section className="customPageContainer">
         <ProductList products={data.recommendedProducts} />
       </section>
     </main>
-  );
+  )
 }
