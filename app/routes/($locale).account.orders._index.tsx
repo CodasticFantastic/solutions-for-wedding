@@ -10,7 +10,7 @@ import type {
   CustomerOrdersFragment,
   OrderItemFragment,
 } from 'customer-accountapi.generated';
-import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
+import {PaginatedResourceSection} from '~/components/core/PaginatedResourceSection';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders'}];

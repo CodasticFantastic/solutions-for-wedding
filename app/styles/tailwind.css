@@ -1,6 +1,27 @@
-/**
- * Configure Tailwind v4 in this file using CSS variables and directives:
- * https://tailwindcss.com/docs/v4-beta#css-first-configuration
- */
-
 @import 'tailwindcss';
+
+@theme {
+  /* === Kolory bazowe === */
+  --color-primary: #3b82f6;
+  --color-secondary: #ec4899;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-muted: #6b7280;
+
+  /* === Kolory tła i tekstu === */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-foreground: #111827;
+
+  /* === Border i shadows === */
+  --border-color: #e5e7eb;
+  --border-radius-base: 0.5rem; /* 8px */
+  --border-radius-sm: 0.25rem;
+  --border-radius-lg: 1rem;
+
+  /* === Padding / Spacing === */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+}
