@@ -236,8 +236,8 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 Create a SearchAside or similar component to render the form and results.
 
 ```ts
-import { SearchFormPredictive } from '~/components/SearchFormPredictive';
-import { SearchResultsPredictive } from '~/components/SearchResultsPredictive';
+import { SearchFormPredictive } from '@/components/SearchFormPredictive';
+import { SearchResultsPredictive } from '@/components/SearchResultsPredictive';
 
 function SearchAside() {
   return (

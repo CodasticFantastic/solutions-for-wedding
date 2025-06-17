@@ -5,15 +5,15 @@ import type {
   FooterQuery,
   HeaderQuery,
 } from 'storefrontapi.generated';
-import {Aside} from '~/components/shopify/Aside';
-import {Footer} from '~/components/shopify/Footer';
-import {Header, HeaderMenu} from '~/components/shopify/Header';
-import {CartMain} from '~/components/shopify/CartMain';
+import {Aside} from '@/components/shopify/Aside';
+import {Footer} from '@/components/shopify/Footer';
+import {Header, HeaderMenu} from '@/components/shopify/Header';
+import {CartMain} from '@/components/shopify/CartMain';
 import {
   SEARCH_ENDPOINT,
   SearchFormPredictive,
-} from '~/components/shopify/SearchFormPredictive';
-import {SearchResultsPredictive} from '~/components/shopify/SearchResultsPredictive';
+} from '@/components/shopify/SearchFormPredictive';
+import {SearchResultsPredictive} from '@/components/shopify/SearchResultsPredictive';
 
 interface PageLayoutProps {
   cart: Promise<CartApiQueryFragment | null>;

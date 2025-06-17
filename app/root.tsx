@@ -11,9 +11,9 @@ import {
   ScrollRestoration,
   useRouteLoaderData,
 } from 'react-router'
-import favicon from '~/assets/favicon.svg'
-import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments'
-import appStyles from '~/styles/app.css?url'
+import favicon from '@/assets/favicon.svg'
+import {FOOTER_QUERY, HEADER_QUERY} from '@/lib/fragments'
+import appStyles from '@/styles/app.css?url'
 import tailwindCss from './styles/tailwind.css?url'
 import {PageLayout} from './components/shopify/PageLayout'
 

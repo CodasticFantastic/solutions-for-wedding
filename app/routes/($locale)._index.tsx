@@ -2,8 +2,8 @@ import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
 import {useLoaderData, type MetaFunction} from 'react-router'
 import {getPaginationVariables, Image} from '@shopify/hydrogen'
 
-import {ProductList} from '~/components/custom/ProductList'
-import {ALL_PRODUCTS_QUERY} from '~/graphql/storefront/queries/allProducts.query'
+import {ProductList} from '@/components/custom/ProductList'
+import {ALL_PRODUCTS_QUERY} from '@/graphql/storefront/queries/allProducts.query'
 
 export const meta: MetaFunction = () => {
   return [{title: 'Home | Solutions for wedding'}]

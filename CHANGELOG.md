@@ -1628,7 +1628,7 @@
   -   createStorefrontClient,
   -   createCustomerAccountClient,
   - } from '@shopify/hydrogen';
-  + import {createAppLoadContext} from '~/lib/context';
+  + import {createAppLoadContext} from '@/lib/context';
 
   export default {
     async fetch(
@@ -1680,7 +1680,7 @@
   ```diff
   // in env.d.ts
 
-  + import type {createAppLoadContext} from '~/lib/context';
+  + import type {createAppLoadContext} from '@/lib/context';
 
   + interface AppLoadContext extends Awaited<ReturnType<typeof createAppLoadContext>> {
   - interface AppLoadContext {
@@ -1786,8 +1786,8 @@
   -  useLoaderData,
   +  useRouteLoaderData,
   } from '@remix-run/react';
-  -import {Layout} from '~/components/Layout';
-  +import {PageLayout} from '~/components/PageLayout';
+  -import {Layout} from '@/components/Layout';
+  +import {PageLayout} from '@/components/PageLayout';
 
   -export default function App() {
   +export function Layout({children}: {children?: React.ReactNode}) {
@@ -1993,7 +1993,7 @@
   // app/lib/root-data.ts
   import { useMatches } from "@remix-run/react";
   import type { SerializeFrom } from "@shopify/remix-oxygen";
-  import type { loader } from "~/root";
+  import type { loader } from "@/root";
 
   /**
    * Access the result of the root loader from a React component.
@@ -2004,7 +2004,7 @@
   };
   ```
 
-  Import this hook from `~/lib/root-data` instead of `~/root` in your components.
+  Import this hook from `@/lib/root-data` instead of `@/root` in your components.
 
 - Updated dependencies [[`b4dfda32`](https://github.com/Shopify/hydrogen/commit/b4dfda320ca52855b2d4493a4306d15a883ca843), [`ffa57bdb`](https://github.com/Shopify/hydrogen/commit/ffa57bdbcdf51e03d565736f9388b5bb4f46292c), [`ac4e1670`](https://github.com/Shopify/hydrogen/commit/ac4e1670f0361a2cd2c6827e4162bbbee0ca37f3), [`0af624d5`](https://github.com/Shopify/hydrogen/commit/0af624d51afc7250db889ba5e736c85a6070c8b2), [`9723eaf3`](https://github.com/Shopify/hydrogen/commit/9723eaf3e5a42c30e657d1cadb123ed775d620e4), [`e842f68c`](https://github.com/Shopify/hydrogen/commit/e842f68c8e879d4c54e0730f3cb55214a760d7f5)]:
   - @shopify/cli-hydrogen@8.0.1

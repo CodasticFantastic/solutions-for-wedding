@@ -162,7 +162,7 @@ export default [
       },
     },
     settings: {
-      'import/internal-regex': '^~/',
+      'import/internal-regex': '^@/',
       'import/resolvers': {
         node: {
           extensions: ['.ts', '.tsx'],

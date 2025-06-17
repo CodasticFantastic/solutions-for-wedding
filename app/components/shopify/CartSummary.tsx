@@ -1,5 +1,5 @@
 import type {CartApiQueryFragment} from 'storefrontapi.generated';
-import type {CartLayout} from '~/components/shopify/CartMain';
+import type {CartLayout} from '@/components/shopify/CartMain';
 import {CartForm, Money, type OptimisticCart} from '@shopify/hydrogen';
 import {useRef} from 'react';
 import {FetcherWithComponents} from 'react-router';
