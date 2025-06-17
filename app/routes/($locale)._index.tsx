@@ -1,9 +1,10 @@
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
-import {useLoaderData, type MetaFunction} from 'react-router'
+import {Link, useLoaderData, type MetaFunction} from 'react-router'
 import {getPaginationVariables, Image} from '@shopify/hydrogen'
 
 import {ProductList} from '@/components/custom/ProductList'
 import {ALL_PRODUCTS_QUERY} from '@/graphql/storefront/queries/allProducts.query'
+import {MoveRight} from 'lucide-react'
 
 export const meta: MetaFunction = () => {
   return [{title: 'Home | Solutions for wedding'}]
@@ -57,13 +58,21 @@ export default function Homepage() {
     <main className="bg-bg-primary min-h-screen">
       <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <h1 className="text-center">Witaj w sklepie z panelami akrylowymi</h1>
-        <h2 className="text-center">Witaj w sklepie z panelami akrylowymi</h2>
         <p className="mx-auto mt-4 text-center text-gray-600">
-          Zaprojektuj swój własny panel lub wybierz gotowy szablon. Personalizacja? Mamy to.
+          Zaprojektuj swój własny panel lub wybierz gotowy szablon.
         </p>
       </div>
 
       <section className="customPageContainer">
+        <div className="items-center justify-between sm:flex">
+          <h2 className="mb-3 text-center sm:text-left">Najpopularniejsze produkty</h2>
+          <Link
+            to="/collections"
+            className="mb-6 flex items-center justify-center gap-2 font-semibold sm:mb-0 sm:justify-end"
+          >
+            Wszystkie produkty <MoveRight />
+          </Link>
+        </div>
         <ProductList products={data.recommendedProducts} />
       </section>
     </main>

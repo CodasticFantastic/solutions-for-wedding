@@ -25,14 +25,14 @@ export function ProductItem({
               alt={image.altText || product.title}
               loading={loading}
               sizes="(min-width: 45em) 400px, 100vw"
-              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-300 hover:scale-103"
             />
           </AspectRatio>
         )}
         <CardContent className="px-3 py-2">
-          <h4 className="text-foreground group-hover:text-primary text-base font-medium transition-colors">
+          <p className="group-hover:text-primary text-base font-medium transition-colors">
             {product.title}
-          </h4>
+          </p>
           <Money
             data={product.priceRange.minVariantPrice}
             className="text-muted-foreground mt-1 text-sm"

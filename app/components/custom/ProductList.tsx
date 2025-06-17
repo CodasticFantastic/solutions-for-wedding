@@ -1,46 +1,40 @@
-import {Suspense} from 'react';
-import {ProductItem} from './ProductItem';
-import type {ProductItemFragment} from 'storefrontapi.generated';
-import {Await} from 'react-router';
-import {PaginatedResourceSection} from '../core/PaginatedResourceSection';
+import {Suspense} from 'react'
+import {ProductItem} from './ProductItem'
+import type {ProductItemFragment} from 'storefrontapi.generated'
+import {Await} from 'react-router'
+import {PaginatedResourceSection} from '../core/PaginatedResourceSection'
 
 interface ProductListProps {
   products: Promise<{
     products: {
-      nodes: ProductItemFragment[];
+      nodes: ProductItemFragment[]
       pageInfo: {
-        hasNextPage: boolean;
-        hasPreviousPage: boolean;
-        startCursor: string | null;
-        endCursor: string | null;
-      };
-    };
-  } | null>;
-  title?: string;
+        hasNextPage: boolean
+        hasPreviousPage: boolean
+        startCursor: string | null
+        endCursor: string | null
+      }
+    }
+  } | null>
 }
 
-export function ProductList({products, title}: ProductListProps) {
+export function ProductList({products}: ProductListProps) {
   return (
-    <section className="product-list">
-      {title && <h2 className="text-xl font-semibold mb-4">{title}</h2>}
-      <Suspense
-        fallback={<p className="text-muted">Wczytywanie produktów...</p>}
-      >
-        <Await resolve={products}>
-          {(response) =>
-            response?.products?.nodes?.length ? (
-              <PaginatedResourceSection
-                connection={response.products}
-                resourcesClassName="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-              >
-                {({node}) => <ProductItem product={node} key={node.id} />}
-              </PaginatedResourceSection>
-            ) : (
-              <p className="text-muted">Brak produktów do wyświetlenia.</p>
-            )
-          }
-        </Await>
-      </Suspense>
-    </section>
-  );
+    <Suspense fallback={<p className="text-muted">Wczytywanie produktów...</p>}>
+      <Await resolve={products}>
+        {(response) =>
+          response?.products?.nodes?.length ? (
+            <PaginatedResourceSection
+              connection={response.products}
+              resourcesClassName="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            >
+              {({node}) => <ProductItem product={node} key={node.id} />}
+            </PaginatedResourceSection>
+          ) : (
+            <p className="text-muted">Brak produktów do wyświetlenia.</p>
+          )
+        }
+      </Await>
+    </Suspense>
+  )
 }
