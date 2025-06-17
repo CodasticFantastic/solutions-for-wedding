@@ -3,7 +3,7 @@ import {Link, useLoaderData, type MetaFunction} from 'react-router';
 import {Image, getPaginationVariables} from '@shopify/hydrogen';
 import type {ArticleItemFragment} from 'storefrontapi.generated';
 import {PaginatedResourceSection} from '@/components/core/PaginatedResourceSection';
-import {redirectIfHandleIsLocalized} from '@/lib/redirect';
+import {redirectIfHandleIsLocalized} from '@/lib/shopify/redirect';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.blog.title ?? ''} blog`}];

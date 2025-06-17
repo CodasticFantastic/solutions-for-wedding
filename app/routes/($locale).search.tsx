@@ -10,7 +10,7 @@ import {
   type RegularSearchReturn,
   type PredictiveSearchReturn,
   getEmptyPredictiveSearchResult,
-} from '@/lib/search';
+} from '@/lib/shopify/search';
 
 export const meta: MetaFunction = () => {
   return [{title: `Hydrogen | Search`}];

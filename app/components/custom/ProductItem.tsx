@@ -1,7 +1,7 @@
 import {Image, Money} from '@shopify/hydrogen'
 import {Link} from 'react-router'
 import type {ProductItemFragment, CollectionItemFragment} from 'storefrontapi.generated'
-import {useVariantUrl} from '@/lib/variants'
+import {useVariantUrl} from '@/lib/shopify/variants'
 import {Card, CardContent} from '../tailwind/ui/card'
 import {AspectRatio} from '../tailwind/ui/aspect-ratio'
 

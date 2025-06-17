@@ -11,7 +11,7 @@ import {
 import {ProductPrice} from '@/components/shopify/ProductPrice';
 import {ProductImage} from '@/components/shopify/ProductImage';
 import {ProductForm} from '@/components/shopify/ProductForm';
-import {redirectIfHandleIsLocalized} from '@/lib/redirect';
+import {redirectIfHandleIsLocalized} from '@/lib/shopify/redirect';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [

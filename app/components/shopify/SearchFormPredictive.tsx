@@ -5,7 +5,7 @@ import {
   type Fetcher,
 } from 'react-router';
 import React, {useRef, useEffect} from 'react';
-import type {PredictiveSearchReturn} from '@/lib/search';
+import type {PredictiveSearchReturn} from '@/lib/shopify/search';
 import {useAside} from './Aside';
 
 type SearchFormPredictiveChildren = (args: {
