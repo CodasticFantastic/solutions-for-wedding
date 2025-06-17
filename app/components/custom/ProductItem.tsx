@@ -2,6 +2,8 @@ import {Image, Money} from '@shopify/hydrogen'
 import {Link} from 'react-router'
 import type {ProductItemFragment, CollectionItemFragment} from 'storefrontapi.generated'
 import {useVariantUrl} from '@/lib/variants'
+import {Card, CardContent} from '../tailwind/ui/card'
+import {AspectRatio} from '../tailwind/ui/aspect-ratio'
 
 export function ProductItem({
   product,
@@ -14,28 +16,29 @@ export function ProductItem({
   const image = product.featuredImage
 
   return (
-    <Link
-      to={variantUrl}
-      prefetch="intent"
-      className="group bg-bg-primary decoration-none block w-full overflow-hidden rounded-md border border-[var(--border-color)] shadow-sm transition hover:shadow-md"
-    >
-      {image && (
-        <div className="bg-bg-secondary aspect-[1/1] w-full overflow-hidden">
-          <Image
-            data={image}
-            alt={image.altText || product.title}
-            loading={loading}
-            sizes="(min-width: 45em) 400px, 100vw"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+    <Link to={variantUrl} prefetch="intent" className="group decoration-none block">
+      <Card className="gap-0 overflow-hidden py-0 transition-shadow hover:shadow-md">
+        {image && (
+          <AspectRatio ratio={1 / 1}>
+            <Image
+              data={image}
+              alt={image.altText || product.title}
+              loading={loading}
+              sizes="(min-width: 45em) 400px, 100vw"
+              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            />
+          </AspectRatio>
+        )}
+        <CardContent className="px-3 py-2">
+          <h4 className="text-foreground group-hover:text-primary text-base font-medium transition-colors">
+            {product.title}
+          </h4>
+          <Money
+            data={product.priceRange.minVariantPrice}
+            className="text-muted-foreground mt-1 text-sm"
           />
-        </div>
-      )}
-      <div className="px-3 py-2">
-        <h4 className="group-hover:text-primary text-foreground text-base font-medium transition">
-          {product.title}
-        </h4>
-        <Money data={product.priceRange.minVariantPrice} className="text-muted] mt-1 text-sm" />
-      </div>
+        </CardContent>
+      </Card>
     </Link>
   )
 }

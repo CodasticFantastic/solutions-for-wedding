@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
@@ -5,6 +6,7 @@
 
 :root {
   /* Custom Variables */
+  --font-roboto: 'Roboto Flex', sans-serif;
   --success: #22c55e;
 
   /* Tailwind Variables */
@@ -128,6 +130,35 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-roboto);
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-2xl font-medium;
+  }
+
+  p {
+    @apply text-base leading-relaxed;
+  }
+
+  a {
+    @apply text-primary hover:text-primary/80;
+  }
+
+  ul {
+    @apply list-disc pl-5;
+  }
+
+  ol {
+    @apply list-decimal pl-5;
   }
 }
 

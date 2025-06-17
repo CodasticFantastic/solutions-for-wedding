@@ -56,9 +56,8 @@ export default function Homepage() {
   return (
     <main className="bg-bg-primary min-h-screen">
       <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-center text-4xl font-bold text-gray-900">
-          Witaj w sklepie z panelami akrylowymi
-        </h1>
+        <h1 className="text-center">Witaj w sklepie z panelami akrylowymi</h1>
+        <h2 className="text-center">Witaj w sklepie z panelami akrylowymi</h2>
         <p className="mx-auto mt-4 text-center text-gray-600">
           Zaprojektuj swój własny panel lub wybierz gotowy szablon. Personalizacja? Mamy to.
         </p>
