@@ -2,7 +2,7 @@ import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
 import {Link, useLoaderData, type MetaFunction} from 'react-router'
 import {getPaginationVariables, Image} from '@shopify/hydrogen'
 
-import {ProductList} from '@/components/custom/ProductList'
+import {ProductList} from '@/components/products/ProductList'
 import {ALL_PRODUCTS_QUERY} from '@/graphql/storefront/queries/allProducts.query'
 import {MoveRight} from 'lucide-react'
 

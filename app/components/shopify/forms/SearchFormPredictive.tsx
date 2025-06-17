@@ -6,7 +6,7 @@ import {
 } from 'react-router';
 import React, {useRef, useEffect} from 'react';
 import type {PredictiveSearchReturn} from '@/lib/shopify/search';
-import {useAside} from './Aside';
+import {useAside} from '../Aside';
 
 type SearchFormPredictiveChildren = (args: {
   fetchResults: (event: React.ChangeEvent<HTMLInputElement>) => void;

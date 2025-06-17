@@ -82,7 +82,6 @@
 
 @theme inline {
   /* Custom Variables */
-  --color-*: initial;
   --color-success: var(--success);
 
   /* Tailwind Variables */

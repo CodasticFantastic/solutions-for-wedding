@@ -3,7 +3,7 @@ import {useLoaderData, type MetaFunction} from 'react-router';
 import {getPaginationVariables, Analytics} from '@shopify/hydrogen';
 import {PaginatedResourceSection} from '@/components/core/PaginatedResourceSection';
 import {redirectIfHandleIsLocalized} from '@/lib/shopify/redirect';
-import {ProductItem} from '@/components/custom/ProductItem';
+import {ProductItem} from '@/components/products/ProductItem';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];

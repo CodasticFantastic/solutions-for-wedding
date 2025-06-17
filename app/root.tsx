@@ -15,7 +15,7 @@ import favicon from '@/assets/favicon.svg'
 import {FOOTER_QUERY, HEADER_QUERY} from '@/lib/shopify/fragments'
 import appStyles from '@/styles/app.css?url'
 import tailwindCss from './styles/tailwind.css?url'
-import {PageLayout} from './components/shopify/PageLayout'
+import {PageLayout} from './components/layout/PageLayout'
 
 export type RootLoader = typeof loader
 

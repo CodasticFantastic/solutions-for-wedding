@@ -14,7 +14,11 @@
   },
   "dependencies": {
     "@radix-ui/react-aspect-ratio": "^1.1.7",
-    "@shopify/hydrogen": "2025.5.0",
+    "@radix-ui/react-collapsible": "^1.1.11",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-navigation-menu": "^1.2.13",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@shopify/hydrogen": "^2025.5.0",
     "@shopify/remix-oxygen": "^3.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

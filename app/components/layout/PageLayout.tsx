@@ -1,27 +1,20 @@
-import {Await, Link} from 'react-router';
-import {Suspense, useId} from 'react';
-import type {
-  CartApiQueryFragment,
-  FooterQuery,
-  HeaderQuery,
-} from 'storefrontapi.generated';
-import {Aside} from '@/components/shopify/Aside';
-import {Footer} from '@/components/shopify/Footer';
-import {Header, HeaderMenu} from '@/components/shopify/Header';
-import {CartMain} from '@/components/shopify/CartMain';
-import {
-  SEARCH_ENDPOINT,
-  SearchFormPredictive,
-} from '@/components/shopify/SearchFormPredictive';
-import {SearchResultsPredictive} from '@/components/shopify/SearchResultsPredictive';
+import {Await, Link} from 'react-router'
+import {Suspense, useId} from 'react'
+import type {CartApiQueryFragment, FooterQuery, HeaderQuery} from 'storefrontapi.generated'
+import {Aside} from '@/components/shopify/Aside'
+import {Footer} from '@/components/shopify/Footer'
+import {Header} from '@/components/layout/Header'
+import {CartMain} from '@/components/shopify/CartMain'
+import {SEARCH_ENDPOINT, SearchFormPredictive} from '@/components/shopify/forms/SearchFormPredictive'
+import {SearchResultsPredictive} from '@/components/shopify/forms/SearchResultsPredictive'
 
 interface PageLayoutProps {
-  cart: Promise<CartApiQueryFragment | null>;
-  footer: Promise<FooterQuery | null>;
-  header: HeaderQuery;
-  isLoggedIn: Promise<boolean>;
-  publicStoreDomain: string;
-  children?: React.ReactNode;
+  cart: Promise<CartApiQueryFragment | null>
+  footer: Promise<FooterQuery | null>
+  header: HeaderQuery
+  isLoggedIn: Promise<boolean>
+  publicStoreDomain: string
+  children?: React.ReactNode
 }
 
 export function PageLayout({
@@ -35,24 +28,18 @@ export function PageLayout({
   return (
     <Aside.Provider>
       <CartAside cart={cart} />
-      <SearchAside />
-      <MobileMenuAside header={header} publicStoreDomain={publicStoreDomain} />
-      {header && (
-        <Header
-          header={header}
-          cart={cart}
-          isLoggedIn={isLoggedIn}
-          publicStoreDomain={publicStoreDomain}
-        />
-      )}
-      <main>{children}</main>
-      <Footer
-        footer={footer}
+
+      <Header
         header={header}
+        cart={cart}
+        isLoggedIn={isLoggedIn}
         publicStoreDomain={publicStoreDomain}
       />
+
+      <main>{children}</main>
+      <Footer footer={footer} header={header} publicStoreDomain={publicStoreDomain} />
     </Aside.Provider>
-  );
+  )
 }
 
 function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
@@ -61,16 +48,16 @@ function CartAside({cart}: {cart: PageLayoutProps['cart']}) {
       <Suspense fallback={<p>Loading cart ...</p>}>
         <Await resolve={cart}>
           {(cart) => {
-            return <CartMain cart={cart} layout="aside" />;
+            return <CartMain cart={cart} layout="aside" />
           }}
         </Await>
       </Suspense>
     </Aside>
-  );
+  )
 }
 
 function SearchAside() {
-  const queriesDatalistId = useId();
+  const queriesDatalistId = useId()
   return (
     <Aside type="search" heading="SEARCH">
       <div className="predictive-search">
@@ -95,14 +82,14 @@ function SearchAside() {
 
         <SearchResultsPredictive>
           {({items, total, term, state, closeSearch}) => {
-            const {articles, collections, pages, products, queries} = items;
+            const {articles, collections, pages, products, queries} = items
 
             if (state === 'loading' && term.current) {
-              return <div>Loading...</div>;
+              return <div>Loading...</div>
             }
 
             if (!total) {
-              return <SearchResultsPredictive.Empty term={term} />;
+              return <SearchResultsPredictive.Empty term={term} />
             }
 
             return (
@@ -132,10 +119,7 @@ function SearchAside() {
                   term={term}
                 />
                 {term.current && total ? (
-                  <Link
-                    onClick={closeSearch}
-                    to={`${SEARCH_ENDPOINT}?q=${term.current}`}
-                  >
+                  <Link onClick={closeSearch} to={`${SEARCH_ENDPOINT}?q=${term.current}`}>
                     <p>
                       View all results for <q>{term.current}</q>
                       &nbsp; →
@@ -143,32 +127,10 @@ function SearchAside() {
                   </Link>
                 ) : null}
               </>
-            );
+            )
           }}
         </SearchResultsPredictive>
       </div>
     </Aside>
-  );
-}
-
-function MobileMenuAside({
-  header,
-  publicStoreDomain,
-}: {
-  header: PageLayoutProps['header'];
-  publicStoreDomain: PageLayoutProps['publicStoreDomain'];
-}) {
-  return (
-    header.menu &&
-    header.shop.primaryDomain?.url && (
-      <Aside type="mobile" heading="MENU">
-        <HeaderMenu
-          menu={header.menu}
-          viewport="mobile"
-          primaryDomainUrl={header.shop.primaryDomain.url}
-          publicStoreDomain={publicStoreDomain}
-        />
-      </Aside>
-    )
-  );
+  )
 }

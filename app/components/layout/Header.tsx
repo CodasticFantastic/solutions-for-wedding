@@ -1,0 +1,288 @@
+import {Suspense} from 'react'
+import {Await, NavLink, useAsyncValue} from 'react-router'
+import {type CartViewPayload, useAnalytics, useOptimisticCart} from '@shopify/hydrogen'
+import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated'
+import {useAside} from '@/components/shopify/Aside'
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from '../shadCn/ui/navigation-menu'
+import {Sheet, SheetClose, SheetContent, SheetTrigger} from '../shadCn/ui/sheet'
+import {Button} from '../shadCn/ui/button'
+import {ChevronDown, Menu, Search, ShoppingBasket, User, X} from 'lucide-react'
+import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '../shadCn/ui/collapsible'
+import {SearchAsidePanel, SearchAside} from './asides/SearchAside'
+// import {SearchAsideButton} from './asides/SearchAside'
+// import {SearchAsideButton} from '../layout/asides/SearchAside'
+
+interface HeaderProps {
+  header: HeaderQuery
+  cart: Promise<CartApiQueryFragment | null>
+  isLoggedIn: Promise<boolean>
+  publicStoreDomain: string
+}
+
+export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProps) {
+  const {shop, menu} = header
+
+  return (
+    <header className="bg-background sticky top-0 z-50 shadow-md">
+      <div className="customPageContainer flex h-16 items-center justify-between">
+        {/* LOGO */}
+        <NavLink to="/" prefetch="intent">
+          <span className="text-xl font-bold">{shop.name}</span>
+        </NavLink>
+
+        {/* DESKTOP MENU */}
+        <nav className="hidden items-center gap-4 md:flex">
+          <DesktopHeader header={header} publicStoreDomain={publicStoreDomain} />
+        </nav>
+
+        {/* Mobile Nav */}
+        <div className="md:hidden">
+          <MobileHeader header={header} publicStoreDomain={publicStoreDomain} />
+        </div>
+
+        {/* CTA shared */}
+        <div className="flex items-center gap-4">
+          <Suspense fallback={<CartBadge count={null} />}>
+            <Await resolve={cart}>
+              <CartBanner />
+            </Await>
+          </Suspense>
+
+          <NavLink to="/account" prefetch="intent" className="text-foreground">
+            <Button variant="ghost" size="icon" aria-label="Search">
+              <User size={20} />
+            </Button>
+          </NavLink>
+
+          <SearchAside />
+        </div>
+      </div>
+    </header>
+  )
+}
+
+export function DesktopHeader({
+  header,
+  publicStoreDomain,
+}: {
+  header: HeaderQuery
+  publicStoreDomain: string
+}) {
+  const navItems = header.menu?.items ?? FALLBACK_HEADER_MENU.items
+
+  return (
+    <NavigationMenu viewport={false}>
+      <NavigationMenuList>
+        {navItems.map((item) => {
+          const url = resolveShopifyUrl(
+            item.url ?? '',
+            publicStoreDomain,
+            header.shop.primaryDomain.url,
+          )
+          const hasChildren = item.items.length > 0
+
+          return (
+            <NavigationMenuItem key={item.id} className="relative">
+              {hasChildren ? (
+                <>
+                  <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm font-medium after:hidden hover:bg-transparent">
+                    {item.title}
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent className="bg-popover ring-border absolute top-full left-0 z-50 w-48 rounded-md p-2 shadow-lg ring-1">
+                    <p className="font-bold">Wyszukaj swoją kategorię</p>
+                    <ul className="flex w-52 list-none flex-col gap-1 py-3 pl-0">
+                      {item.items.map((sub) => {
+                        const subUrl = resolveShopifyUrl(
+                          sub.url ?? '',
+                          publicStoreDomain,
+                          header.shop.primaryDomain.url,
+                        )
+                        return (
+                          <li key={sub.id}>
+                            <NavLink to={subUrl}>{sub.title}</NavLink>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </NavigationMenuContent>
+                </>
+              ) : (
+                <NavLink
+                  to={url}
+                  className="text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  {item.title}
+                </NavLink>
+              )}
+            </NavigationMenuItem>
+          )
+        })}
+      </NavigationMenuList>
+    </NavigationMenu>
+  )
+}
+
+export function MobileHeader({
+  header,
+  publicStoreDomain,
+}: {
+  header: HeaderQuery
+  publicStoreDomain: string
+}) {
+  const navItems = header.menu?.items ?? FALLBACK_HEADER_MENU.items
+
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <Menu />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left">
+        <div className="mt-4 flex flex-col gap-4 px-3">
+          {/* Menu Aside Header */}
+          <div className="flex items-center justify-between">
+            <NavLink to="/" className="text-lg font-semibold" prefetch="intent">
+              LOGO HERE
+            </NavLink>
+            <SheetClose>
+              <X />
+            </SheetClose>
+          </div>
+          {/* Menu Links */}
+          {navItems.map((item) => {
+            const url = resolveShopifyUrl(
+              item.url ?? '',
+              publicStoreDomain,
+              header.shop.primaryDomain.url,
+            )
+            const hasChildren = item.items.length > 0
+            return hasChildren ? (
+              <Collapsible key={item.id}>
+                <CollapsibleTrigger className="flex w-full items-center justify-between text-left text-base font-medium">
+                  {item.title} <ChevronDown className="h-4 w-4" />
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-2 ml-2 flex flex-col gap-2">
+                  {item.items.map((sub) => (
+                    <SheetClose asChild key={sub.id}>
+                      <NavLink
+                        to={resolveShopifyUrl(
+                          sub.url ?? '',
+                          publicStoreDomain,
+                          header.shop.primaryDomain.url,
+                        )}
+                        className="text-sm"
+                      >
+                        {sub.title}
+                      </NavLink>
+                    </SheetClose>
+                  ))}
+                </CollapsibleContent>
+              </Collapsible>
+            ) : (
+              <SheetClose asChild key={item.id}>
+                <NavLink to={url} className="text-foreground inline text-base font-medium">
+                  {item.title}
+                </NavLink>
+              </SheetClose>
+            )
+          })}
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+function CartBadge({count}: {count: number | null}) {
+  const {open} = useAside()
+  const {publish, shop, cart, prevCart} = useAnalytics()
+
+  return (
+    <a
+      href="/cart"
+      onClick={(e) => {
+        e.preventDefault()
+        open('cart')
+        publish('cart_viewed', {
+          cart,
+          prevCart,
+          shop,
+          url: window.location.href || '',
+        } as CartViewPayload)
+      }}
+    >
+      <Button className="relative" variant="ghost" size="icon" aria-label="Cart">
+        <ShoppingBasket size={20} />
+        <span className="bg-primary text-background absolute top-[-8px] right-[-6px] flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
+          {count === null ? '&nbsp;' : count}
+        </span>
+      </Button>
+    </a>
+  )
+}
+
+function CartBanner() {
+  const originalCart = useAsyncValue() as CartApiQueryFragment | null
+  const cart = useOptimisticCart(originalCart)
+  return <CartBadge count={cart?.totalQuantity ?? 0} />
+}
+
+function resolveShopifyUrl(
+  rawUrl: string,
+  publicStoreDomain: string,
+  primaryDomain: string,
+): string {
+  return rawUrl.includes('myshopify.com') ||
+    rawUrl.includes(publicStoreDomain) ||
+    rawUrl.includes(primaryDomain)
+    ? new URL(rawUrl).pathname
+    : rawUrl
+}
+
+const FALLBACK_HEADER_MENU = {
+  id: 'gid://shopify/Menu/199655587896',
+  items: [
+    {
+      id: 'gid://shopify/MenuItem/461609500728',
+      resourceId: null,
+      tags: [],
+      title: 'Collections',
+      type: 'HTTP',
+      url: '/collections',
+      items: [],
+    },
+    {
+      id: 'gid://shopify/MenuItem/461609533496',
+      resourceId: null,
+      tags: [],
+      title: 'Blog',
+      type: 'HTTP',
+      url: '/blogs/journal',
+      items: [],
+    },
+    {
+      id: 'gid://shopify/MenuItem/461609566264',
+      resourceId: null,
+      tags: [],
+      title: 'Policies',
+      type: 'HTTP',
+      url: '/policies',
+      items: [],
+    },
+    {
+      id: 'gid://shopify/MenuItem/461609599032',
+      resourceId: 'gid://shopify/Page/92591030328',
+      tags: [],
+      title: 'About',
+      type: 'PAGE',
+      url: '/pages/about',
+      items: [],
+    },
+  ],
+}
