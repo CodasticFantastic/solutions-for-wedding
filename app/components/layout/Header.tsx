@@ -41,13 +41,15 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           <DesktopHeader header={header} publicStoreDomain={publicStoreDomain} />
         </nav>
 
-        {/* Mobile Nav */}
-        <div className="md:hidden">
-          <MobileHeader header={header} publicStoreDomain={publicStoreDomain} />
-        </div>
-
         {/* CTA shared */}
         <div className="flex items-center gap-4">
+          {/* Mobile Nav */}
+          <div className="md:hidden">
+            <MobileHeader header={header} publicStoreDomain={publicStoreDomain} />
+          </div>
+
+          <SearchAside />
+
           <Suspense fallback={<CartBadge count={null} />}>
             <Await resolve={cart}>
               <CartBanner />
@@ -56,11 +58,9 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
           <NavLink to="/account" prefetch="intent" className="text-foreground">
             <Button variant="ghost" size="icon" aria-label="Search">
-              <User size={20} />
+              <User size={20} className="size-5" />
             </Button>
           </NavLink>
-
-          <SearchAside />
         </div>
       </div>
     </header>
@@ -218,8 +218,8 @@ function CartBadge({count}: {count: number | null}) {
       }}
     >
       <Button className="relative" variant="ghost" size="icon" aria-label="Cart">
-        <ShoppingBasket size={20} />
-        <span className="bg-primary text-background absolute top-[-8px] right-[-6px] flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
+        <ShoppingBasket className="text-foreground size-5" />
+        <span className="bg-foreground text-background absolute top-[-1px] right-[-1px] flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
           {count === null ? '&nbsp;' : count}
         </span>
       </Button>

@@ -149,7 +149,7 @@
   }
 
   a {
-    @apply text-primary hover:text-primary/80;
+    @apply text-primary hover:text-primary/80 cursor-pointer;
   }
 
   ul {
@@ -163,4 +163,29 @@
 
 .customPageContainer {
   @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* SearchResultsPredictive */
+.predictive-search-result {
+  @apply mb-8;
+}
+
+.predictive-search-result ul {
+  @apply list-none pl-1;
+}
+
+.predictive-result-header {
+  @apply mb-3 text-lg font-medium uppercase;
+}
+
+.predictive-search-result-item {
+  @apply mb-2;
+}
+
+.predictive-search-result-item a {
+  @apply flex items-center;
+}
+
+.predictive-search-result-item a img {
+  @apply mr-3 h-full;
 }

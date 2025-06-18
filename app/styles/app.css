@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --aside-width: 400px;
   --cart-aside-summary-height-with-discount: 300px;
   --cart-aside-summary-height: 250px;
@@ -6,6 +6,12 @@
   --header-height: 64px;
   --color-dark: #000;
   --color-light: #fff;
+} */
+
+/* Ukryj strzałkę z inputa z listą (datalist) */
+.no-datalist-arrow::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none;
 }
 
 img {
@@ -301,28 +307,6 @@ button.reset:hover:not(:has(> *)) {
   background: var(--color-light);
   position: sticky;
   top: 0;
-}
-
-.predictive-search-result {
-  margin-bottom: 2rem;
-}
-
-.predictive-search-result h5 {
-  text-transform: uppercase;
-}
-
-.predictive-search-result-item {
-  margin-bottom: 0.5rem;
-}
-
-.predictive-search-result-item a {
-  align-items: center;
-  display: flex;
-}
-
-.predictive-search-result-item a img {
-  margin-right: 0.75rem;
-  height: 100%;
 }
 
 .search-result {
