@@ -14,9 +14,7 @@ import {Sheet, SheetClose, SheetContent, SheetTrigger} from '../shadCn/ui/sheet'
 import {Button} from '../shadCn/ui/button'
 import {ChevronDown, Menu, Search, ShoppingBasket, User, X} from 'lucide-react'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '../shadCn/ui/collapsible'
-import {SearchAsidePanel, SearchAside} from './asides/SearchAside'
-// import {SearchAsideButton} from './asides/SearchAside'
-// import {SearchAsideButton} from '../layout/asides/SearchAside'
+import {SearchAside} from './asides/SearchAside'
 
 interface HeaderProps {
   header: HeaderQuery
@@ -43,24 +41,27 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
 
         {/* CTA shared */}
         <div className="flex items-center gap-4">
-          {/* Mobile Nav */}
-          <div className="md:hidden">
-            <MobileHeader header={header} publicStoreDomain={publicStoreDomain} />
-          </div>
-
+          {/* Search Aside */}
           <SearchAside />
 
+          {/* Cart Aside*/}
           <Suspense fallback={<CartBadge count={null} />}>
             <Await resolve={cart}>
               <CartBanner />
             </Await>
           </Suspense>
 
-          <NavLink to="/account" prefetch="intent" className="text-foreground">
+          {/* Go to Account */}
+          <NavLink to="/account" prefetch="intent" className="text-foreground hidden md:block">
             <Button variant="ghost" size="icon" aria-label="Search">
               <User size={20} className="size-5" />
             </Button>
           </NavLink>
+
+          {/* Mobile Nav */}
+          <div className="md:hidden">
+            <MobileHeader header={header} publicStoreDomain={publicStoreDomain} />
+          </div>
         </div>
       </div>
     </header>
@@ -94,7 +95,7 @@ export function DesktopHeader({
                   <NavigationMenuTrigger className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm font-medium after:hidden hover:bg-transparent">
                     {item.title}
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-popover ring-border absolute top-full left-0 z-50 w-48 rounded-md p-2 shadow-lg ring-1">
+                  <NavigationMenuContent className="!bg-popover ring-border z-50 !mt-5 rounded-md p-2 shadow-lg ring-1">
                     <p className="font-bold">Wyszukaj swoją kategorię</p>
                     <ul className="flex w-52 list-none flex-col gap-1 py-3 pl-0">
                       {item.items.map((sub) => {
@@ -105,7 +106,9 @@ export function DesktopHeader({
                         )
                         return (
                           <li key={sub.id}>
-                            <NavLink to={subUrl}>{sub.title}</NavLink>
+                            <NavLink to={subUrl} className="text-muted-foreground">
+                              {sub.title}
+                            </NavLink>
                           </li>
                         )
                       })}
@@ -144,55 +147,68 @@ export function MobileHeader({
           <Menu />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
-        <div className="mt-4 flex flex-col gap-4 px-3">
+      <SheetContent side="left" className="sheet-content max-w-[75vw]">
+        <div className="sheet-content-container">
           {/* Menu Aside Header */}
-          <div className="flex items-center justify-between">
-            <NavLink to="/" className="text-lg font-semibold" prefetch="intent">
-              LOGO HERE
-            </NavLink>
-            <SheetClose>
-              <X />
+          <div className="sheet-content-header">
+            <p className="sheet-content-header-title">Menu</p>
+            <SheetClose asChild>
+              <Button variant="ghost" size="icon" aria-label="Zamknij menu">
+                <X className="sheet-content-header-close" />
+              </Button>
             </SheetClose>
           </div>
-          {/* Menu Links */}
-          {navItems.map((item) => {
-            const url = resolveShopifyUrl(
-              item.url ?? '',
-              publicStoreDomain,
-              header.shop.primaryDomain.url,
-            )
-            const hasChildren = item.items.length > 0
-            return hasChildren ? (
-              <Collapsible key={item.id}>
-                <CollapsibleTrigger className="flex w-full items-center justify-between text-left text-base font-medium">
-                  {item.title} <ChevronDown className="h-4 w-4" />
-                </CollapsibleTrigger>
-                <CollapsibleContent className="mt-2 ml-2 flex flex-col gap-2">
-                  {item.items.map((sub) => (
-                    <SheetClose asChild key={sub.id}>
-                      <NavLink
-                        to={resolveShopifyUrl(
-                          sub.url ?? '',
-                          publicStoreDomain,
-                          header.shop.primaryDomain.url,
-                        )}
-                        className="text-sm"
-                      >
-                        {sub.title}
-                      </NavLink>
-                    </SheetClose>
-                  ))}
-                </CollapsibleContent>
-              </Collapsible>
-            ) : (
-              <SheetClose asChild key={item.id}>
-                <NavLink to={url} className="text-foreground inline text-base font-medium">
-                  {item.title}
-                </NavLink>
-              </SheetClose>
-            )
-          })}
+          {/* Menu Aside Content */}
+
+          <div className="sheet-content-content">
+            <div className="sheet-content-content-scrollable flex flex-col gap-3">
+              {/* Menu Links */}
+              {navItems.map((item) => {
+                const url = resolveShopifyUrl(
+                  item.url ?? '',
+                  publicStoreDomain,
+                  header.shop.primaryDomain.url,
+                )
+                const hasChildren = item.items.length > 0
+                return hasChildren ? (
+                  <Collapsible key={item.id}>
+                    <CollapsibleTrigger className="flex w-full items-center justify-between text-left text-base font-medium">
+                      {item.title} <ChevronDown className="h-4 w-4" />
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-2 ml-2 flex flex-col gap-2">
+                      {item.items.map((sub) => (
+                        <SheetClose asChild key={sub.id}>
+                          <NavLink
+                            to={resolveShopifyUrl(
+                              sub.url ?? '',
+                              publicStoreDomain,
+                              header.shop.primaryDomain.url,
+                            )}
+                            className="text-muted-foreground hover:text-foreground text-sm"
+                          >
+                            {sub.title}
+                          </NavLink>
+                        </SheetClose>
+                      ))}
+                    </CollapsibleContent>
+                  </Collapsible>
+                ) : (
+                  <SheetClose asChild key={item.id}>
+                    <NavLink to={url} className="text-foreground inline text-base font-medium">
+                      {item.title}
+                    </NavLink>
+                  </SheetClose>
+                )
+              })}
+            </div>
+          </div>
+          <div className="mt-auto mb-0">
+            <NavLink to="/account" prefetch="intent" className="text-foreground w-full">
+              <Button variant="outline-primary" size="sm" aria-label="Search" className="w-full">
+                <User size={20} className="size-5" /> Konto użytkownika
+              </Button>
+            </NavLink>
+          </div>
         </div>
       </SheetContent>
     </Sheet>

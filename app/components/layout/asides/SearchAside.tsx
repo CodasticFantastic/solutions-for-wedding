@@ -2,15 +2,15 @@ import {Sheet, SheetTrigger, SheetContent, SheetClose} from '@/components/shadCn
 import {Button} from '@/components/shadCn/ui/button'
 import {Frown, Loader2, MoveRight, Search, SearchIcon, X} from 'lucide-react'
 import {useId} from 'react'
-
 import {Link} from 'react-router'
-import {SearchFormPredictive} from '@/components/shopify/forms/SearchFormPredictive'
+import {
+  SEARCH_ENDPOINT,
+  SearchFormPredictive,
+} from '@/components/shopify/forms/SearchFormPredictive'
 import {SearchResultsPredictive} from '@/components/shopify/forms/SearchResultsPredictive'
 import {Input} from '@/components/shadCn/ui/input'
 
-export const SEARCH_ENDPOINT = '/search'
-
-// Komponent łączący przycisk i panel w jeden Sheet (do użycia w layoucie/headerze)
+// Main component (Open aside panel Button + Panel)
 export function SearchAside() {
   return (
     <Sheet>
@@ -20,8 +20,8 @@ export function SearchAside() {
   )
 }
 
-// Przycisk otwierający panel wyszukiwania
-export function SearchAsideButton() {
+// Przycisk otwierający panel wyszukiwania (do użycia wewnątrz <Sheet>)
+function SearchAsideButton() {
   return (
     <SheetTrigger asChild>
       <Button variant="ghost" size="icon" aria-label="Search">
@@ -32,24 +32,24 @@ export function SearchAsideButton() {
 }
 
 // Panel wyszukiwania (do użycia wewnątrz <Sheet>)
-export function SearchAsidePanel() {
+function SearchAsidePanel() {
   const queriesDatalistId = useId()
 
   return (
-    <SheetContent side="right" className="h-screen max-h-screen w-full px-4 py-2 sm:max-w-sm">
-      <div className="flex h-full flex-col">
+    <SheetContent side="right" className="sheet-content">
+      <div className="sheet-content-container">
         {/* Aside Header */}
-        <div className="border-border mb-3 flex shrink-0 items-center justify-between border-b-1 pb-1">
-          <h2 className="mb-2 text-xl font-semibold">Wyszukaj</h2>
+        <div className="sheet-content-header">
+          <p className="sheet-content-header-title">Wyszukaj</p>
           <SheetClose asChild>
             <Button variant="ghost" size="icon" aria-label="Zamknij wyszukiwanie">
-              <X className="size-5" />
+              <X className="sheet-content-header-close" />
             </Button>
           </SheetClose>
         </div>
 
         {/* Aside Content */}
-        <div className="flex min-h-0 flex-1 flex-col">
+        <div className="sheet-content-content">
           <SearchFormPredictive>
             {({fetchResults, inputRef}) => (
               <form
@@ -71,7 +71,7 @@ export function SearchAsidePanel() {
             )}
           </SearchFormPredictive>
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="sheet-content-content-scrollable">
             <SearchResultsPredictive>
               {({items, total, term, state, closeSearch}) => {
                 const {articles, collections, pages, products, queries} = items

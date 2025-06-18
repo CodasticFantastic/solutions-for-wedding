@@ -165,6 +165,35 @@
   @apply container mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* Sheet (Aside) */
+.sheet-content {
+  @apply h-screen max-h-screen w-full px-4 py-2 sm:max-w-sm;
+}
+
+.sheet-content-container {
+  @apply flex h-full flex-col;
+}
+
+.sheet-content-header {
+  @apply border-border mb-3 flex shrink-0 items-center justify-between border-b pb-1;
+}
+
+.sheet-content-header-title {
+  @apply text-xl font-semibold;
+}
+
+.sheet-content-header-close {
+  @apply size-5;
+}
+
+.sheet-content-content {
+  @apply flex min-h-0 flex-1 flex-col;
+}
+
+.sheet-content-content-scrollable {
+  @apply flex-1 overflow-y-auto;
+}
+
 /* SearchResultsPredictive */
 .predictive-search-result {
   @apply mb-8;
