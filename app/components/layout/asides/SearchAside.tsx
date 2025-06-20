@@ -1,4 +1,10 @@
-import {Sheet, SheetTrigger, SheetContent, SheetClose} from '@/components/shadCn/ui/sheet'
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetClose,
+  SheetTitle,
+} from '@/components/shadCn/ui/sheet'
 import {Button} from '@/components/shadCn/ui/button'
 import {Frown, Loader2, MoveRight, Search, SearchIcon, X} from 'lucide-react'
 import {useId} from 'react'
@@ -37,10 +43,11 @@ function SearchAsidePanel() {
 
   return (
     <SheetContent side="right" className="sheet-content">
+      {/* SheetTitle dla dostępności */}
       <div className="sheet-content-container">
         {/* Aside Header */}
         <div className="sheet-content-header">
-          <p className="sheet-content-header-title">Wyszukaj</p>
+          <SheetTitle className="sheet-content-header-title">Wyszukaj</SheetTitle>
           <SheetClose asChild>
             <Button variant="ghost" size="icon" aria-label="Zamknij wyszukiwanie">
               <X className="sheet-content-header-close" />
@@ -52,22 +59,15 @@ function SearchAsidePanel() {
         <div className="sheet-content-content">
           <SearchFormPredictive>
             {({fetchResults, inputRef}) => (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                }}
-                className="mb-4 flex items-center"
-              >
-                <Input
-                  name="q"
-                  onChange={fetchResults}
-                  placeholder="Wyszukaj interesującą Cię frazę..."
-                  ref={inputRef}
-                  type="search"
-                  list={queriesDatalistId}
-                  className="placeholder:text-muted-foreground no-datalist-arrow flex-1"
-                />
-              </form>
+              <Input
+                name="q"
+                onChange={fetchResults}
+                placeholder="Wyszukaj interesującą Cię frazę..."
+                ref={inputRef}
+                type="search"
+                list={queriesDatalistId}
+                className="placeholder:text-muted-foreground no-datalist-arrow mb-4 flex-1"
+              />
             )}
           </SearchFormPredictive>
 

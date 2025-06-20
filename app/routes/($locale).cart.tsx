@@ -7,7 +7,7 @@ import {
   type ActionFunctionArgs,
   type HeadersFunction,
 } from '@shopify/remix-oxygen';
-import {CartMain} from '@/components/shopify/CartMain';
+import {CartMain} from '@/components/shopify/cart/CartMain';
 
 export const meta: MetaFunction = () => {
   return [{title: `Hydrogen | Cart`}];

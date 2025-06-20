@@ -6,7 +6,6 @@ import {
   urlWithTrackingParams,
   type PredictiveSearchReturn,
 } from '@/lib/shopify/search'
-import {useAside} from '../Aside'
 
 type PredictiveSearchItems = PredictiveSearchReturn['result']['items']
 
@@ -39,7 +38,6 @@ type SearchResultsPredictiveProps = {
  * Component that renders predictive search results
  */
 export function SearchResultsPredictive({children}: SearchResultsPredictiveProps) {
-  const aside = useAside()
   const {term, inputRef, fetcher, total, items} = usePredictiveSearch()
 
   /*
@@ -57,7 +55,6 @@ export function SearchResultsPredictive({children}: SearchResultsPredictiveProps
    */
   function closeSearch() {
     resetInput()
-    aside.close()
   }
 
   return children({

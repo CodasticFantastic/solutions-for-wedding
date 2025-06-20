@@ -15,6 +15,7 @@ import {Button} from '../shadCn/ui/button'
 import {ChevronDown, Menu, Search, ShoppingBasket, User, X} from 'lucide-react'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '../shadCn/ui/collapsible'
 import {SearchAside} from './asides/SearchAside'
+import {CartAside} from './asides/CartAside'
 
 interface HeaderProps {
   header: HeaderQuery
@@ -44,12 +45,8 @@ export function Header({header, isLoggedIn, cart, publicStoreDomain}: HeaderProp
           {/* Search Aside */}
           <SearchAside />
 
-          {/* Cart Aside*/}
-          <Suspense fallback={<CartBadge count={null} />}>
-            <Await resolve={cart}>
-              <CartBanner />
-            </Await>
-          </Suspense>
+          {/* Cart Aside */}
+          <CartAside cart={cart} />
 
           {/* Go to Account */}
           <NavLink to="/account" prefetch="intent" className="text-foreground hidden md:block">
@@ -213,40 +210,6 @@ export function MobileHeader({
       </SheetContent>
     </Sheet>
   )
-}
-
-function CartBadge({count}: {count: number | null}) {
-  const {open} = useAside()
-  const {publish, shop, cart, prevCart} = useAnalytics()
-
-  return (
-    <a
-      href="/cart"
-      onClick={(e) => {
-        e.preventDefault()
-        open('cart')
-        publish('cart_viewed', {
-          cart,
-          prevCart,
-          shop,
-          url: window.location.href || '',
-        } as CartViewPayload)
-      }}
-    >
-      <Button className="relative" variant="ghost" size="icon" aria-label="Cart">
-        <ShoppingBasket className="text-foreground size-5" />
-        <span className="bg-foreground text-background absolute top-[-1px] right-[-1px] flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
-          {count === null ? '&nbsp;' : count}
-        </span>
-      </Button>
-    </a>
-  )
-}
-
-function CartBanner() {
-  const originalCart = useAsyncValue() as CartApiQueryFragment | null
-  const cart = useOptimisticCart(originalCart)
-  return <CartBadge count={cart?.totalQuantity ?? 0} />
 }
 
 function resolveShopifyUrl(

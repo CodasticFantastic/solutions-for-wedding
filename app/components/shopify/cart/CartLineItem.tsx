@@ -1,41 +1,26 @@
-import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types';
-import type {CartLayout} from '@/components/shopify/CartMain';
-import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen';
-import {useVariantUrl} from '@/lib/shopify/variants';
-import {Link} from 'react-router';
-import {ProductPrice} from './ProductPrice';
-import {useAside} from './Aside';
-import type {CartApiQueryFragment} from 'storefrontapi.generated';
+import type {CartLineUpdateInput} from '@shopify/hydrogen/storefront-api-types'
+import type {CartLayout} from '@/components/shopify/cart/CartMain'
+import {CartForm, Image, type OptimisticCartLine} from '@shopify/hydrogen'
+import {useVariantUrl} from '@/lib/shopify/variants'
+import {Link} from 'react-router'
+import {ProductPrice} from '../ProductPrice'
+import type {CartApiQueryFragment} from 'storefrontapi.generated'
 
-type CartLine = OptimisticCartLine<CartApiQueryFragment>;
+type CartLine = OptimisticCartLine<CartApiQueryFragment>
 
 /**
  * A single line item in the cart. It displays the product image, title, price.
  * It also provides controls to update the quantity or remove the line item.
  */
-export function CartLineItem({
-  layout,
-  line,
-}: {
-  layout: CartLayout;
-  line: CartLine;
-}) {
-  const {id, merchandise} = line;
-  const {product, title, image, selectedOptions} = merchandise;
-  const lineItemUrl = useVariantUrl(product.handle, selectedOptions);
-  const {close} = useAside();
+export function CartLineItem({layout, line}: {layout: CartLayout; line: CartLine}) {
+  const {id, merchandise} = line
+  const {product, title, image, selectedOptions} = merchandise
+  const lineItemUrl = useVariantUrl(product.handle, selectedOptions)
 
   return (
     <li key={id} className="cart-line">
       {image && (
-        <Image
-          alt={title}
-          aspectRatio="1/1"
-          data={image}
-          height={100}
-          loading="lazy"
-          width={100}
-        />
+        <Image alt={title} aspectRatio="1/1" data={image} height={100} loading="lazy" width={100} />
       )}
 
       <div>
@@ -44,7 +29,7 @@ export function CartLineItem({
           to={lineItemUrl}
           onClick={() => {
             if (layout === 'aside') {
-              close();
+              close()
             }
           }}
         >
@@ -65,7 +50,7 @@ export function CartLineItem({
         <CartLineQuantity line={line} />
       </div>
     </li>
-  );
+  )
 }
 
 /**
@@ -74,10 +59,10 @@ export function CartLineItem({
  * hasn't yet responded that it was successfully added to the cart.
  */
 function CartLineQuantity({line}: {line: CartLine}) {
-  if (!line || typeof line?.quantity === 'undefined') return null;
-  const {id: lineId, quantity, isOptimistic} = line;
-  const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0));
-  const nextQuantity = Number((quantity + 1).toFixed(0));
+  if (!line || typeof line?.quantity === 'undefined') return null
+  const {id: lineId, quantity, isOptimistic} = line
+  const prevQuantity = Number(Math.max(0, quantity - 1).toFixed(0))
+  const nextQuantity = Number((quantity + 1).toFixed(0))
 
   return (
     <div className="cart-line-quantity">
@@ -106,7 +91,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
       &nbsp;
       <CartLineRemoveButton lineIds={[lineId]} disabled={!!isOptimistic} />
     </div>
-  );
+  )
 }
 
 /**
@@ -114,13 +99,7 @@ function CartLineQuantity({line}: {line: CartLine}) {
  * when the line item is new, and the server hasn't yet responded
  * that it was successfully added to the cart.
  */
-function CartLineRemoveButton({
-  lineIds,
-  disabled,
-}: {
-  lineIds: string[];
-  disabled: boolean;
-}) {
+function CartLineRemoveButton({lineIds, disabled}: {lineIds: string[]; disabled: boolean}) {
   return (
     <CartForm
       fetcherKey={getUpdateKey(lineIds)}
@@ -132,17 +111,17 @@ function CartLineRemoveButton({
         Remove
       </button>
     </CartForm>
-  );
+  )
 }
 
 function CartLineUpdateButton({
   children,
   lines,
 }: {
-  children: React.ReactNode;
-  lines: CartLineUpdateInput[];
+  children: React.ReactNode
+  lines: CartLineUpdateInput[]
 }) {
-  const lineIds = lines.map((line) => line.id);
+  const lineIds = lines.map((line) => line.id)
 
   return (
     <CartForm
@@ -153,7 +132,7 @@ function CartLineUpdateButton({
     >
       {children}
     </CartForm>
-  );
+  )
 }
 
 /**
@@ -164,5 +143,5 @@ function CartLineUpdateButton({
  * @returns
  */
 function getUpdateKey(lineIds: string[]) {
-  return [CartForm.ACTIONS.LinesUpdate, ...lineIds].join('-');
+  return [CartForm.ACTIONS.LinesUpdate, ...lineIds].join('-')
 }

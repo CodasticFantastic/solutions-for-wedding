@@ -5,6 +5,7 @@ import {getPaginationVariables, Image} from '@shopify/hydrogen'
 import {ProductList} from '@/components/products/ProductList'
 import {ALL_PRODUCTS_QUERY} from '@/graphql/storefront/queries/allProducts.query'
 import {MoveRight} from 'lucide-react'
+import {Button} from '@/components/shadCn/ui/button'
 
 export const meta: MetaFunction = () => {
   return [{title: 'Home | Solutions for wedding'}]
@@ -56,11 +57,33 @@ export default function Homepage() {
   const data = useLoaderData<typeof loader>()
   return (
     <main className="bg-bg-primary min-h-screen">
-      <div className="mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <h1 className="text-center">Witaj w sklepie z panelami akrylowymi</h1>
-        <p className="mx-auto mt-4 text-center text-gray-600">
-          Zaprojektuj swój własny panel lub wybierz gotowy szablon.
-        </p>
+      <div className="mx-auto h-[40vh] bg-gray-200 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="customPageContainer flex h-full flex-col items-center justify-center">
+          <h1 className="text-center">Witaj w sklepie z panelami akrylowymi</h1>
+          <p className="text-center">Zaprojektuj swój własny panel lub wybierz gotowy szablon.</p>
+        </div>
+      </div>
+      <div className="customPageContainer my-8 flex flex-col gap-4 md:flex-row">
+        <div className="flex w-full flex-col items-center justify-center gap-5 rounded-md bg-gray-200 px-4 py-16 md:w-1/2">
+          <h2 className="text-center">Stwórz swój własny projekt</h2>
+          <p className="text-center">
+            Zaprojektuj swój własny unikalny projekt panelu akrylowego z wykorzystaniem naszego
+            specjalistycznego konfiguratora.
+          </p>
+          <Link to="/konfigurator" prefetch="intent">
+            <Button variant="outline-primary">Przejdź do edytora projektów</Button>
+          </Link>
+        </div>
+        <div className="flex w-full flex-col items-center justify-center gap-5 rounded-md bg-gray-200 px-4 py-16 md:w-1/2">
+          <h2 className="text-center">Wybierz gotowy szablon</h2>
+          <p className="text-center">
+            Nasi projektanci każdego dnia tworzą nowe, unikalne projekty paneli akrylowych. Nie
+            zwlekaj i wybierz jeden z gotowych projektów.
+          </p>
+          <Link to="/konfigurator" prefetch="intent">
+            <Button variant="outline-primary">Przejdź do edytora projektów</Button>
+          </Link>
+        </div>
       </div>
 
       <section className="customPageContainer">
