@@ -1,8 +1,5 @@
-import {Suspense} from 'react'
-import {Await, NavLink, useAsyncValue} from 'react-router'
-import {type CartViewPayload, useAnalytics, useOptimisticCart} from '@shopify/hydrogen'
+import {NavLink} from 'react-router'
 import type {HeaderQuery, CartApiQueryFragment} from 'storefrontapi.generated'
-import {useAside} from '@/components/shopify/Aside'
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,7 +9,7 @@ import {
 } from '../shadCn/ui/navigation-menu'
 import {Sheet, SheetClose, SheetContent, SheetTrigger} from '../shadCn/ui/sheet'
 import {Button} from '../shadCn/ui/button'
-import {ChevronDown, Menu, Search, ShoppingBasket, User, X} from 'lucide-react'
+import {ChevronDown, Menu, User, X} from 'lucide-react'
 import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '../shadCn/ui/collapsible'
 import {SearchAside} from './asides/SearchAside'
 import {CartAside} from './asides/CartAside'
