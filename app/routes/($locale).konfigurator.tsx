@@ -1,12 +1,32 @@
-import {AcrylicEditor} from '@/components/acrylicEditor/AcrylicEditor'
+import {
+  AcrylicTileEditor,
+  AcrylicTileTemplate,
+  generateFullTemplate,
+} from '@/components/acrylicTileEditor'
 
 export default function ConfiguratorPage() {
   // W przyszłości można tu pobrać dane szablonu i przekazać do edytora
   // const template = useLoaderData();
 
+  // Przykład płytki 15cm x 21cm z rzeczywistymi wymiarami
+  const sampleTemplate: AcrylicTileTemplate = generateFullTemplate({
+    id: 'test-15x21',
+    name: 'Płytka Testowa 15cm x 21cm',
+    realWidth: 15, // cm
+    realHeight: 21, // cm
+    category: 'rectangular',
+    backgroundColor: '#ffffff',
+    dpi: 300,
+  })
+
+  const handleSave = (data: any) => {
+    console.log('Zapisano projekt:', data)
+    alert('Projekt został zapisany!')
+  }
+
   return (
-    <div className="customPageContainer">
-      <AcrylicEditor /* template={template} */ />
+    <div className="h-full">
+      <AcrylicTileEditor template={sampleTemplate} onSave={handleSave} />
     </div>
   )
 }
