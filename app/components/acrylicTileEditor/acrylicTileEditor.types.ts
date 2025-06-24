@@ -8,7 +8,7 @@ export interface CanvasState {
 
 export interface EditorState {
   canvas: CanvasState
-  selectedElement: string | null
+  selectedElementId: string | null
   elements: EditorElement[]
   template: AcrylicTileTemplate
   currentFlowStep?: 'size' | 'background' | 'design'

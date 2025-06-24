@@ -262,7 +262,7 @@ function Canvas() {
         {/* elements */}
         <Layer>
           {state.elements.map((el) => {
-            const isSelected = state.selectedElement === el.id
+            const isSelected = state.selectedElementId === el.id
             if (el.type === 'text') {
               return (
                 <TextNode
@@ -298,7 +298,7 @@ function Canvas() {
 // ---------------------------------------------------------------------------
 function RightPanel() {
   const {state, dispatch, onSave} = useAcrylicTileEditor()
-  const selected = state.elements.find((el) => el.id === state.selectedElement)
+  const selected = state.elements.find((el) => el.id === state.selectedElementId)
   return (
     <div className="flex h-full flex-col space-y-4 p-4 text-sm">
       {/* Add buttons */}

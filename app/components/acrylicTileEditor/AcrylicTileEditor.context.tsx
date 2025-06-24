@@ -13,6 +13,7 @@ type EditorAction =
   | {type: 'RESET_CANVAS'}
   | {type: 'UPDATE_TEMPLATE'; payload: Partial<AcrylicTileTemplate>}
   | {type: 'LOAD_PROJECT'; payload: {template: AcrylicTileTemplate; elements: EditorElement[]}}
+  | {type: 'MOVE_ELEMENT'; payload: {id: string; direction: 'UP' | 'DOWN'}}
 
 // --- Reducer ---
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -38,7 +39,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     case 'SELECT_ELEMENT':
       return {
         ...state,
-        selectedElement: action.payload,
+        selectedElementId: action.payload,
       }
 
     case 'ADD_ELEMENT':
@@ -59,8 +60,24 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         elements: state.elements.filter((el) => el.id !== action.payload),
-        selectedElement: state.selectedElement === action.payload ? null : state.selectedElement,
+        selectedElementId: state.selectedElementId === action.payload ? null : state.selectedElementId,
       }
+
+    case 'MOVE_ELEMENT': {
+      const {id, direction} = action.payload
+      const index = state.elements.findIndex((el) => el.id === id)
+      if (index === -1) return state
+      const newElements = [...state.elements]
+      if (direction === 'UP' && index < newElements.length - 1) {
+        ;[newElements[index], newElements[index + 1]] = [newElements[index + 1], newElements[index]]
+      } else if (direction === 'DOWN' && index > 0) {
+        ;[newElements[index], newElements[index - 1]] = [newElements[index - 1], newElements[index]]
+      }
+      return {
+        ...state,
+        elements: newElements,
+      }
+    }
 
     case 'RESET_CANVAS':
       return {
@@ -73,7 +90,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
           height: state.template.height,
         },
         elements: [],
-        selectedElement: null,
+        selectedElementId: null,
       }
 
     case 'UPDATE_TEMPLATE': {
@@ -95,7 +112,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         ...state,
         template: action.payload.template,
         elements: action.payload.elements,
-        selectedElement: null,
+        selectedElementId: null,
         canvas: {
           ...state.canvas,
           width: action.payload.template.width,
@@ -139,7 +156,7 @@ export function AcrylicTileEditorProvider({
       width: template.width,
       height: template.height,
     },
-    selectedElement: null,
+    selectedElementId: null,
     elements: [],
     template,
     ...customInitialState,
