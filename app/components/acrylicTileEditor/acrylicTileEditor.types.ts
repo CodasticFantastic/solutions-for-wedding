@@ -19,7 +19,8 @@ export interface AcrylicTileTemplate {
   name: string;
   width: number;
   height: number;
-  backgroundImage?: string | null;
+  backgroundImage: string | null;
+  orientation: 'horizontal' | 'vertical';
 }
 
 export interface EditorElement {
@@ -57,7 +58,8 @@ type RawTemplate = {
   realHeight: number // cm
   category?: string // ignored but kept for compatibility
   backgroundImage?: string
-  dpi?: number
+  dpi: number
+  orientation: 'horizontal' | 'vertical'
 }
 
 export function generateFullTemplate({
@@ -67,12 +69,17 @@ export function generateFullTemplate({
   realHeight,
   backgroundImage = 'transparent',
   dpi = DEFAULT_DPI,
+  orientation = 'horizontal',
 }: RawTemplate): AcrylicTileTemplate {
+  const widthPx = orientation === 'vertical' ? cmToPixels(realWidth, dpi) : cmToPixels(realHeight, dpi)
+  const heightPx = orientation === 'vertical' ? cmToPixels(realHeight, dpi) : cmToPixels(realWidth, dpi)
+
   return {
     id,
     name,
-    width: cmToPixels(realWidth, dpi),
-    height: cmToPixels(realHeight, dpi),
+    width: widthPx,
+    height: heightPx,
     backgroundImage,
+    orientation,
   }
 }

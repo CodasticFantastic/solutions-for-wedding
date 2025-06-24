@@ -1,4 +1,4 @@
-import {createContext, useContext, useReducer, ReactNode} from 'react'
+import {createContext, useContext, useReducer, ReactNode, useRef} from 'react'
 import {AcrylicTileTemplate, EditorState, EditorElement} from './acrylicTileEditor.types'
 
 // --- Akcje ---
@@ -130,6 +130,7 @@ interface AcrylicTileEditorContextType {
   state: EditorState
   dispatch: React.Dispatch<EditorAction>
   onSave?: (data: any) => void
+  stageRef: React.RefObject<any>
 }
 
 const AcrylicTileEditorContext = createContext<AcrylicTileEditorContextType | undefined>(undefined)
@@ -164,8 +165,11 @@ export function AcrylicTileEditorProvider({
 
   const [state, dispatch] = useReducer(editorReducer, initialState)
 
+  // This ref will hold Konva Stage instance
+  const stageRef = useRef<any>(null)
+
   return (
-    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave}}>
+    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef}}>
       {children}
     </AcrylicTileEditorContext.Provider>
   )

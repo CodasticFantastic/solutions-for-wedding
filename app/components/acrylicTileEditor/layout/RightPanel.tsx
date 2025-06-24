@@ -2,6 +2,7 @@ import {Button} from '@/components/shadCn/ui/button'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {Label} from '@/components/shadCn/ui/label'
 import {Input} from '@/components/shadCn/ui/input'
+import {SaveToPcButton} from '../components/SaveToPcButton'
 
 export const RightPanel = () => {
   const {state, dispatch, onSave} = useAcrylicTileEditor()
@@ -113,6 +114,9 @@ export const RightPanel = () => {
           </div>
         </div>
       )}
+
+      {/* Export button */}
+      <SaveToPcButton />
 
       <Button
         onClick={() => onSave?.({template: state.template, elements: state.elements})}

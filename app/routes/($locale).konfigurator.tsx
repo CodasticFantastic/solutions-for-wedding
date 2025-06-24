@@ -12,8 +12,9 @@ export default function ConfiguratorPage() {
     realWidth: 14, // cm
     realHeight: 21, // cm
     category: 'rectangular',
-    backgroundImage: 'transparent',
+    backgroundImage: 'mirror-gold',
     dpi: 300,
+    orientation: 'vertical',
   })
 
   const handleSave = (data: any) => {
