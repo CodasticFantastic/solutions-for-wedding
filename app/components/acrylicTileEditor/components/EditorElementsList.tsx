@@ -1,7 +1,7 @@
 import {Button} from '@/components/shadCn/ui/button'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {Badge} from '@/components/shadCn/ui/badge'
-import {ChevronDown, ChevronUp, Trash2} from 'lucide-react'
+import {CaseSensitive, ChevronDown, ChevronUp, Image, Trash2} from 'lucide-react'
 import clsx from 'clsx'
 
 // ---------------------------------------------------------------------------
@@ -24,7 +24,8 @@ export const EditorElementsList = () => {
     <>
       <p className="mb-2 text-base font-semibold">Dodane Elementy</p>
       <ul className="list-none space-y-1 overflow-y-auto pl-0">
-        {elements.map((el) => (
+        {elements.length === 0 && <p className="text-muted-foreground text-sm">Brak elementów</p>}
+        {elements?.map((el) => (
           <EditorElementListItem
             key={el.id}
             element={el}
@@ -81,7 +82,7 @@ const EditorElementListItem = ({
         onClick={onSelect}
       >
         {/* Badge with element type */}
-        <Badge variant="outline">{element.type === 'text' ? 'Tekst' : 'Obraz'}</Badge>
+        <Badge variant="outline">{element.type === 'text' ? <CaseSensitive /> : <Image />}</Badge>
         {/* Label with ellipsis */}
         <span className="flex-1 truncate px-1 text-left">{label}</span>
         {/* Element Controls */}
