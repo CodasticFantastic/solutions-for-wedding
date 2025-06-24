@@ -11,6 +11,7 @@ type EditorAction =
   | {type: 'UPDATE_ELEMENT'; payload: {id: string; updates: Partial<EditorElement>}}
   | {type: 'REMOVE_ELEMENT'; payload: string}
   | {type: 'RESET_CANVAS'}
+  | {type: 'UPDATE_TEMPLATE'; payload: Partial<AcrylicTileTemplate>}
   | {type: 'LOAD_PROJECT'; payload: {template: AcrylicTileTemplate; elements: EditorElement[]}}
 
 // --- Reducer ---
@@ -74,6 +75,20 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         elements: [],
         selectedElement: null,
       }
+
+    case 'UPDATE_TEMPLATE': {
+      const updatedTemplate = {...state.template, ...action.payload}
+      const updatedCanvas = {
+        ...state.canvas,
+        width: updatedTemplate.width,
+        height: updatedTemplate.height,
+      }
+      return {
+        ...state,
+        template: updatedTemplate,
+        canvas: updatedCanvas,
+      }
+    }
 
     case 'LOAD_PROJECT':
       return {

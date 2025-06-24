@@ -12,7 +12,7 @@ export default function ConfiguratorPage() {
   const sampleTemplate: AcrylicTileTemplate = generateFullTemplate({
     id: 'test-15x21',
     name: 'Płytka Testowa 15cm x 21cm',
-    realWidth: 15, // cm
+    realWidth: 14, // cm
     realHeight: 21, // cm
     category: 'rectangular',
     backgroundColor: '#ffffff',

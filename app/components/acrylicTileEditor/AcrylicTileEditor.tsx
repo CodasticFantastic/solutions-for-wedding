@@ -1,26 +1,32 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
-import { Stage, Layer, Rect, Text, Image as KonvaImage, Transformer } from 'react-konva'
-import { KonvaEventObject } from 'konva/lib/Node'
-import { AcrylicTileEditorProvider, useAcrylicTileEditor } from './AcrylicTileEditor.context'
-import { AcrylicTileTemplate, EditorState } from './acrylicTileEditor.types'
+import {useRef, useState, useEffect, useCallback} from 'react'
+import {Stage, Layer, Rect, Text, Image as KonvaImage, Transformer} from 'react-konva'
+import {KonvaEventObject} from 'konva/lib/Node'
+import {AcrylicTileEditorProvider, useAcrylicTileEditor} from './AcrylicTileEditor.context'
+import {AcrylicTileTemplate, EditorState} from './acrylicTileEditor.types'
+import {Button} from '@/components/shadCn/ui/button'
+import {Input} from '@/components/shadCn/ui/input'
+import {Label} from '@/components/shadCn/ui/label'
+import {SizeSelector} from './components/SizeSelector'
+import {NameInput} from './components/NameInput'
+import {EditorElementsList} from './components/EditorElementsList'
 
 // ---------------------------------------------------------------------------
 // Canvas component (minimal implementation)
 // ---------------------------------------------------------------------------
 function Canvas() {
-  const { state, dispatch } = useAcrylicTileEditor()
+  const {state, dispatch} = useAcrylicTileEditor()
   const stageRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
+  const [containerSize, setContainerSize] = useState({width: 0, height: 0})
   const [isDragging, setIsDragging] = useState(false)
-  const [lastCenter, setLastCenter] = useState<{ x: number; y: number } | null>(null)
+  const [lastCenter, setLastCenter] = useState<{x: number; y: number} | null>(null)
   const [lastDist, setLastDist] = useState(0)
 
   // Resize observer
   const updateContainerSize = useCallback(() => {
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect()
-      setContainerSize({ width: rect.width, height: rect.height })
+      setContainerSize({width: rect.width, height: rect.height})
     }
   }, [])
 
@@ -47,12 +53,12 @@ function Canvas() {
       const scaleBy = 1.1
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy
       const clampedScale = Math.max(0.1, Math.min(5, newScale))
-      dispatch({ type: 'SET_CANVAS_SCALE', payload: clampedScale })
+      dispatch({type: 'SET_CANVAS_SCALE', payload: clampedScale})
       const newPos = {
         x: pointer.x - mousePointTo.x * clampedScale,
         y: pointer.y - mousePointTo.y * clampedScale,
       }
-      dispatch({ type: 'SET_CANVAS_POSITION', payload: newPos })
+      dispatch({type: 'SET_CANVAS_POSITION', payload: newPos})
     },
     [dispatch],
   )
@@ -65,7 +71,7 @@ function Canvas() {
     } else if (e.evt.touches.length === 2) {
       const [t1, t2] = e.evt.touches
       setLastDist(Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY))
-      setLastCenter({ x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2 })
+      setLastCenter({x: (t1.clientX + t2.clientX) / 2, y: (t1.clientY + t2.clientY) / 2})
     }
   }, [])
 
@@ -76,14 +82,14 @@ function Canvas() {
       if (touches.length === 1 && isDragging) {
         const stage = stageRef.current
         const point = stage.getPointerPosition()
-        if (point) dispatch({ type: 'SET_CANVAS_POSITION', payload: { x: point.x, y: point.y } })
+        if (point) dispatch({type: 'SET_CANVAS_POSITION', payload: {x: point.x, y: point.y}})
       } else if (touches.length === 2 && lastCenter) {
         const [t1, t2] = touches
         const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY)
         const scaleFactor = dist / lastDist
         const newScale = state.canvas.scale * scaleFactor
         const clampedScale = Math.max(0.1, Math.min(5, newScale))
-        dispatch({ type: 'SET_CANVAS_SCALE', payload: clampedScale })
+        dispatch({type: 'SET_CANVAS_SCALE', payload: clampedScale})
         setLastDist(dist)
       }
     },
@@ -99,19 +105,19 @@ function Canvas() {
   // Fit to screen once mounted
   useEffect(() => {
     if (!containerSize.width || !containerSize.height) return
-    const { width: tW, height: tH } = state.template
+    const {width: tW, height: tH} = state.template
     const scale = Math.min(containerSize.width / tW, containerSize.height / tH, 1) * 0.9
     const x = (containerSize.width - tW * scale) / 2
     const y = (containerSize.height - tH * scale) / 2
-    dispatch({ type: 'SET_CANVAS_SCALE', payload: scale })
-    dispatch({ type: 'SET_CANVAS_POSITION', payload: { x, y } })
+    dispatch({type: 'SET_CANVAS_SCALE', payload: scale})
+    dispatch({type: 'SET_CANVAS_POSITION', payload: {x, y}})
   }, [containerSize, dispatch, state.template])
 
-  const resetCanvas = () => dispatch({ type: 'RESET_CANVAS' })
+  const resetCanvas = () => dispatch({type: 'RESET_CANVAS'})
 
-  const handleElementSelect = (id: string) => dispatch({ type: 'SELECT_ELEMENT', payload: id })
+  const handleElementSelect = (id: string) => dispatch({type: 'SELECT_ELEMENT', payload: id})
   const handleElementChange = (id: string, updates: any) =>
-    dispatch({ type: 'UPDATE_ELEMENT', payload: { id, updates } })
+    dispatch({type: 'UPDATE_ELEMENT', payload: {id, updates}})
 
   // ------------------ Child nodes ------------------
   interface NodeProps {
@@ -121,7 +127,7 @@ function Canvas() {
     onChange: (updates: any) => void
   }
 
-  const TextNode = ({ element, isSelected, onSelect, onChange }: NodeProps) => {
+  const TextNode = ({element, isSelected, onSelect, onChange}: NodeProps) => {
     const shapeRef = useRef<any>(null)
     const transformerRef = useRef<any>(null)
 
@@ -142,7 +148,7 @@ function Canvas() {
           fill={element.properties.fill || '#000'}
           onClick={onSelect}
           draggable
-          onDragEnd={(e) => onChange({ x: e.target.x(), y: e.target.y() })}
+          onDragEnd={(e) => onChange({x: e.target.x(), y: e.target.y()})}
           onTransformEnd={() => {
             const node = shapeRef.current
             const scaleX = node.scaleX()
@@ -162,7 +168,7 @@ function Canvas() {
     )
   }
 
-  const ImageNode = ({ element, isSelected, onSelect, onChange }: NodeProps) => {
+  const ImageNode = ({element, isSelected, onSelect, onChange}: NodeProps) => {
     const shapeRef = useRef<any>(null)
     const transformerRef = useRef<any>(null)
     const [imgObj, setImgObj] = useState<HTMLImageElement | null>(null)
@@ -190,7 +196,7 @@ function Canvas() {
           {...element}
           onClick={onSelect}
           draggable
-          onDragEnd={(e) => onChange({ x: e.target.x(), y: e.target.y() })}
+          onDragEnd={(e) => onChange({x: e.target.x(), y: e.target.y()})}
           onTransformEnd={() => {
             const node = shapeRef.current
             const scaleX = node.scaleX()
@@ -211,7 +217,7 @@ function Canvas() {
   }
 
   return (
-    <div ref={containerRef} className="w-full h-full relative bg-gray-100 overflow-hidden">
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-gray-100">
       {/* simple reset */}
       <button
         onClick={resetCanvas}
@@ -236,7 +242,9 @@ function Canvas() {
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onClick={(e) => e.target === e.target.getStage() && dispatch({ type: 'SELECT_ELEMENT', payload: null })}
+        onClick={(e) =>
+          e.target === e.target.getStage() && dispatch({type: 'SELECT_ELEMENT', payload: null})
+        }
       >
         {/* background */}
         <Layer>
@@ -286,16 +294,17 @@ function Canvas() {
 }
 
 // ---------------------------------------------------------------------------
-// Controls – very lightweight (add element & basic props)
+// Right panel – tile settings & element list
 // ---------------------------------------------------------------------------
-function Controls() {
-  const { state, dispatch, onSave } = useAcrylicTileEditor()
+function RightPanel() {
+  const {state, dispatch, onSave} = useAcrylicTileEditor()
   const selected = state.elements.find((el) => el.id === state.selectedElement)
   return (
-    <div className="flex h-full flex-col p-4 space-y-4 text-sm">
+    <div className="flex h-full flex-col space-y-4 p-4 text-sm">
       {/* Add buttons */}
       <div className="space-y-2">
-        <button
+        <Button
+          variant="secondary"
           onClick={() =>
             dispatch({
               type: 'ADD_ELEMENT',
@@ -307,15 +316,16 @@ function Controls() {
                 width: 200,
                 height: 50,
                 rotation: 0,
-                properties: { text: 'Nowy tekst', fontSize: 24, fill: '#000000' },
+                properties: {text: 'Nowy tekst', fontSize: 24, fill: '#000000'},
               },
             })
           }
-          className="w-full rounded bg-blue-600 py-1 text-white"
+          className="w-full"
         >
           + Tekst
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="secondary"
           onClick={() => {
             const input = document.createElement('input')
             input.type = 'file'
@@ -335,7 +345,7 @@ function Controls() {
                     width: 200,
                     height: 200,
                     rotation: 0,
-                    properties: { src: evt.target?.result as string, alt: file.name },
+                    properties: {src: evt.target?.result as string, alt: file.name},
                   },
                 })
               }
@@ -343,62 +353,101 @@ function Controls() {
             }
             input.click()
           }}
-          className="w-full rounded bg-blue-600 py-1 text-white"
+          className="w-full"
         >
           + Obraz
-        </button>
+        </Button>
       </div>
 
       {/* Properties */}
       {selected && (
-        <div className="space-y-2">
-          <label htmlFor="prop-text" className="block text-xs">Tekst</label>
-          {selected.type === 'text' && (
-            <input
-              id="prop-text"
-              type="text"
-              value={selected.properties.text || ''}
+        <div className="space-y-4">
+          <div className="space-y-1">
+            <Label htmlFor="prop-text">Tekst</Label>
+            {selected.type === 'text' && (
+              <Input
+                id="prop-text"
+                type="text"
+                value={selected.properties.text || ''}
+                onChange={(e) =>
+                  dispatch({
+                    type: 'UPDATE_ELEMENT',
+                    payload: {
+                      id: selected.id,
+                      updates: {
+                        properties: {...selected.properties, text: e.target.value},
+                      },
+                    },
+                  })
+                }
+                className="w-full"
+              />
+            )}
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="prop-color">Kolor</Label>
+            <Input
+              id="prop-color"
+              type="color"
+              value={selected.properties.fill || '#000000'}
               onChange={(e) =>
                 dispatch({
                   type: 'UPDATE_ELEMENT',
                   payload: {
                     id: selected.id,
                     updates: {
-                      properties: { ...selected.properties, text: e.target.value },
+                      properties: {...selected.properties, fill: e.target.value},
                     },
                   },
                 })
               }
-              className="w-full rounded border px-2 py-1"
+              className="h-8 w-full p-0"
             />
-          )}
-          <label htmlFor="prop-color" className="block text-xs">Kolor</label>
-          <input
-            id="prop-color"
-            type="color"
-            value={selected.properties.fill || '#000000'}
-            onChange={(e) =>
-              dispatch({
-                type: 'UPDATE_ELEMENT',
-                payload: {
-                  id: selected.id,
-                  updates: {
-                    properties: { ...selected.properties, fill: e.target.value },
-                  },
-                },
-              })
-            }
-            className="h-8 w-full"
-          />
+          </div>
         </div>
       )}
 
-      <button
-        onClick={() => onSave?.({ template: state.template, elements: state.elements })}
-        className="mt-auto w-full rounded border py-1"
+      <Button
+        onClick={() => onSave?.({template: state.template, elements: state.elements})}
+        variant="default"
+        className="mt-auto w-full"
       >
         Zapisz projekt
-      </button>
+      </Button>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Left sidebar – tile settings & element list
+// ---------------------------------------------------------------------------
+function LeftPanel() {
+  return (
+    <div className="flex h-full flex-col space-y-4 overflow-y-auto p-4">
+      {/* Nazwa wzoru */}
+      <div className="space-y-2">
+        <NameInput />
+      </div>
+
+      {/* Wybór rozmiaru płytki */}
+      <div className="space-y-2">
+        <SizeSelector />
+      </div>
+
+      {/* <div className="space-y-2">
+        <h2 className="text-base font-semibold">Tło</h2>
+        <Input
+          type="color"
+          value={state.template.backgroundColor || '#ffffff'}
+          onChange={(e) =>
+            dispatch({type: 'UPDATE_TEMPLATE', payload: {backgroundColor: e.target.value}})
+          }
+          className="h-8 p-0"
+        />
+      </div> */}
+
+      {/* Lista dodanych elementów */}
+      <EditorElementsList />
     </div>
   )
 }
@@ -412,28 +461,18 @@ interface AcrylicTileEditorProps {
   initialState?: Partial<EditorState>
 }
 
-export function AcrylicTileEditor({ template, onSave, initialState }: AcrylicTileEditorProps) {
+export function AcrylicTileEditor({template, onSave, initialState}: AcrylicTileEditorProps) {
   return (
     <AcrylicTileEditorProvider template={template} onSave={onSave} initialState={initialState}>
-      <div className="flex h-screen flex-col bg-gray-50">
-        {/* header */}
-        <div className="flex items-center justify-between border-b bg-white p-4 text-sm">
-          <h1 className="font-semibold">Edytor Płytek</h1>
-          <button
-            onClick={() => onSave?.({ template, elements: [] })}
-            className="rounded bg-blue-600 px-3 py-1 text-white"
-          >
-            Zamknij
-          </button>
+      <div className="flex h-[calc(100vh-64px)]">
+        <div className="bg-background w-80 border-r">
+          <LeftPanel />
         </div>
-        {/* main */}
-        <div className="flex flex-1 overflow-hidden">
-          <div className="flex-1">
-            <Canvas />
-          </div>
-          <div className="w-72 border-l bg-white">
-            <Controls />
-          </div>
+        <div className="flex-1">
+          <Canvas />
+        </div>
+        <div className="bg-background w-80 border-l">
+          <RightPanel />
         </div>
       </div>
     </AcrylicTileEditorProvider>
