@@ -424,12 +424,12 @@ function RightPanel() {
 function LeftPanel() {
   return (
     <div className="flex h-full flex-col space-y-4 overflow-y-auto p-4">
-      {/* Nazwa wzoru */}
+      {/* Template name */}
       <div className="space-y-2">
         <NameInput />
       </div>
 
-      {/* Wybór rozmiaru płytki */}
+      {/* Template size */}
       <div className="space-y-2">
         <SizeSelector />
       </div>
@@ -446,7 +446,7 @@ function LeftPanel() {
         />
       </div> */}
 
-      {/* Lista dodanych elementów */}
+      {/* Elements list */}
       <EditorElementsList />
     </div>
   )
