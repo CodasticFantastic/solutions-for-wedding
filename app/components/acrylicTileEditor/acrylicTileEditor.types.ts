@@ -19,7 +19,7 @@ export interface AcrylicTileTemplate {
   name: string;
   width: number;
   height: number;
-  backgroundColor?: string;
+  backgroundImage?: string | null;
 }
 
 export interface EditorElement {
@@ -56,7 +56,7 @@ type RawTemplate = {
   realWidth: number // cm
   realHeight: number // cm
   category?: string // ignored but kept for compatibility
-  backgroundColor?: string
+  backgroundImage?: string
   dpi?: number
 }
 
@@ -65,7 +65,7 @@ export function generateFullTemplate({
   name,
   realWidth,
   realHeight,
-  backgroundColor = '#ffffff',
+  backgroundImage = 'transparent',
   dpi = DEFAULT_DPI,
 }: RawTemplate): AcrylicTileTemplate {
   return {
@@ -73,6 +73,6 @@ export function generateFullTemplate({
     name,
     width: cmToPixels(realWidth, dpi),
     height: cmToPixels(realHeight, dpi),
-    backgroundColor,
+    backgroundImage,
   }
 }

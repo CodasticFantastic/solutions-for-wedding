@@ -1,5 +1,9 @@
 import { cmToPixels } from './acrylicTileEditor.types'
 
+// Asset imports
+import mirrorGoldUrl from '@/assets/editor/backgrounds/mirror-gold.png?url'
+import mirrorSilverUrl from '@/assets/editor/backgrounds/mirror-silver.jpg?url'
+
 export type TileSizeConfig = {
   id: string
   label: string
@@ -22,4 +26,36 @@ export function tileSizeToPixels({ widthCm, heightCm }: TileSizeConfig) {
     width: cmToPixels(widthCm),
     height: cmToPixels(heightCm),
   }
-} 
+}
+
+// ---------------------------------------------------------------------------
+// Shared visual constants
+// ---------------------------------------------------------------------------
+export const CORNER_RADIUS = 42
+
+// ---------------------------------------------------------------------------
+// Background options
+// ---------------------------------------------------------------------------
+export type BackgroundOption = {
+  id: string
+  label: string
+  src: string | null
+}
+
+export const DEFAULT_TILE_BACKGROUNDS: BackgroundOption[] = [
+  {
+    id: 'transparent',
+    label: 'Przezroczyste',
+    src: null,
+  },
+  {
+    id: 'mirror-gold',
+    label: 'Złote lustro',
+    src: mirrorGoldUrl,
+  },
+  {
+    id: 'mirror-silver',
+    label: 'Srebrne lustro',
+    src: mirrorSilverUrl,
+  },
+] 

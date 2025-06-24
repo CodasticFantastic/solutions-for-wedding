@@ -9,11 +9,20 @@ import {Label} from '@/components/shadCn/ui/label'
 import {SizeSelector} from './components/SizeSelector'
 import {NameInput} from './components/NameInput'
 import {EditorElementsList} from './components/EditorElementsList'
+import {BackgroundSelector} from './components/BackgroundSelector'
+import {CORNER_RADIUS, DEFAULT_TILE_BACKGROUNDS} from './acrylicTileEditor.config'
 
 // ---------------------------------------------------------------------------
 // Canvas component (minimal implementation)
 // ---------------------------------------------------------------------------
 function Canvas() {
+  const [isClient, setIsClient] = useState(false)
+
+  // Prevent server side rendering for Konva
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   const {state, dispatch} = useAcrylicTileEditor()
   const stageRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -101,6 +110,24 @@ function Canvas() {
     setLastCenter(null)
     setLastDist(0)
   }
+
+  // Background image loading
+  const [bgImage, setBgImage] = useState<HTMLImageElement | null>(null)
+
+  useEffect(() => {
+    // Clear previous first
+    setBgImage(null)
+
+    const bgId = state.template.backgroundImage
+    if (!bgId) return // transparent / none
+
+    const opt = DEFAULT_TILE_BACKGROUNDS.find((b) => b.id === bgId)
+    if (!opt?.src) return
+
+    const img = new window.Image()
+    img.src = opt.src
+    img.onload = () => setBgImage(img)
+  }, [state.template.backgroundImage])
 
   // Fit to screen once mounted
   useEffect(() => {
@@ -216,6 +243,10 @@ function Canvas() {
     )
   }
 
+  if (!isClient) {
+    return <div ref={containerRef} className="relative h-full w-full bg-gray-100" />
+  }
+
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-gray-100">
       {/* simple reset */}
@@ -246,20 +277,34 @@ function Canvas() {
           e.target === e.target.getStage() && dispatch({type: 'SELECT_ELEMENT', payload: null})
         }
       >
-        {/* background */}
         <Layer>
+          {/* Base background color */}
           <Rect
             x={0}
             y={0}
             width={state.template.width}
             height={state.template.height}
-            fill={state.template.backgroundColor || '#ffffff'}
+            fill="transparent"
             stroke="#e5e7eb"
-            strokeWidth={1}
+            strokeWidth={5}
+            cornerRadius={CORNER_RADIUS}
           />
+
+          {/* Optional background image */}
+          {state.template.backgroundImage && bgImage && (
+            <KonvaImage
+              image={bgImage}
+              x={0}
+              y={0}
+              width={state.template.width}
+              height={state.template.height}
+              listening={false}
+              cornerRadius={CORNER_RADIUS}
+            />
+          )}
         </Layer>
 
-        {/* elements */}
+        {/* elements (also clipped) */}
         <Layer>
           {state.elements.map((el) => {
             const isSelected = state.selectedElementId === el.id
@@ -419,7 +464,7 @@ function RightPanel() {
 }
 
 // ---------------------------------------------------------------------------
-// Left sidebar – tile settings & element list
+// Left sidebar
 // ---------------------------------------------------------------------------
 function LeftPanel() {
   return (
@@ -434,17 +479,12 @@ function LeftPanel() {
         <SizeSelector />
       </div>
 
-      {/* <div className="space-y-2">
-        <h2 className="text-base font-semibold">Tło</h2>
-        <Input
-          type="color"
-          value={state.template.backgroundColor || '#ffffff'}
-          onChange={(e) =>
-            dispatch({type: 'UPDATE_TEMPLATE', payload: {backgroundColor: e.target.value}})
-          }
-          className="h-8 p-0"
-        />
-      </div> */}
+      {/* Background selector */}
+      <div className="space-y-2">
+        <BackgroundSelector />
+      </div>
+
+      <hr className="my-4" />
 
       {/* Elements list */}
       <EditorElementsList />

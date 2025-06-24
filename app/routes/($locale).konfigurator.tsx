@@ -5,9 +5,6 @@ import {
 } from '@/components/acrylicTileEditor'
 
 export default function ConfiguratorPage() {
-  // W przyszłości można tu pobrać dane szablonu i przekazać do edytora
-  // const template = useLoaderData();
-
   // Przykład płytki 15cm x 21cm z rzeczywistymi wymiarami
   const sampleTemplate: AcrylicTileTemplate = generateFullTemplate({
     id: 'test-15x21',
@@ -15,7 +12,7 @@ export default function ConfiguratorPage() {
     realWidth: 14, // cm
     realHeight: 21, // cm
     category: 'rectangular',
-    backgroundColor: '#ffffff',
+    backgroundImage: 'transparent',
     dpi: 300,
   })
 
