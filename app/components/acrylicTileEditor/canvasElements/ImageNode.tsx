@@ -1,11 +1,12 @@
 import {useEffect, useRef, useState} from 'react'
 import {Image as KonvaImage, Transformer} from 'react-konva'
+import {EditorImageElement} from '../acrylicTileEditor.types'
 
 interface NodeProps {
-  element: any
+  element: EditorImageElement
   isSelected: boolean
   onSelect: () => void
-  onChange: (updates: any) => void
+  onChange: (updates: Partial<EditorImageElement>) => void
 }
 
 export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) {

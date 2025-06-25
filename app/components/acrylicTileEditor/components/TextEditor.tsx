@@ -95,33 +95,6 @@ export const TextEditor = () => {
               />
             </div>
 
-            {/* Font size */}
-            <div className="space-y-1">
-              <Label htmlFor="prop-rotation">Obrót</Label>
-              <Input
-                id="prop-rotation"
-                type="number"
-                min={4}
-                max={200}
-                value={(selected.rotation || 24).toString()}
-                onChange={(e) =>
-                  dispatch({
-                    type: 'UPDATE_ELEMENT',
-                    payload: {
-                      id: selected.id,
-                      updates: {
-                        properties: {
-                          ...selected.properties,
-                          fontSize: parseInt(e.target.value || '0', 10) || 0,
-                        },
-                      },
-                    },
-                  })
-                }
-                className="w-full"
-              />
-            </div>
-
             {/* Color */}
             <div className="space-y-1">
               <Label htmlFor="prop-color">Kolor</Label>

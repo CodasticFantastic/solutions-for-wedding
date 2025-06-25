@@ -1,12 +1,13 @@
 import Konva from 'konva'
 import {useEffect, useRef} from 'react'
 import {Text, Transformer} from 'react-konva'
+import {EditorTextElement} from '../acrylicTileEditor.types'
 
 interface NodeProps {
-  element: any
+  element: EditorTextElement
   isSelected: boolean
   onSelect: () => void
-  onChange: (updates: any) => void
+  onChange: (updates: Partial<EditorTextElement>) => void
 }
 
 export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {

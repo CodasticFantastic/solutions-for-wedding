@@ -23,16 +23,59 @@ export interface AcrylicTileTemplate {
   orientation: 'horizontal' | 'vertical';
 }
 
-export interface EditorElement {
+// ---------------------------------------------------------------------------
+// Element definitions
+// ---------------------------------------------------------------------------
+
+// Common fields shared by all element types
+interface BaseElement {
   id: string
-  type: 'text' | 'image'
   x: number
   y: number
+  /** Width in pixels – optional for text, required for image */
   width?: number
+  /** Height in pixels – optional for text, required for image */
   height?: number
+  /** Rotation in degrees */
   rotation?: number
-  properties: Record<string, any>
 }
+
+// --- Text element -----------------------------------------------------------
+export interface TextElementProperties {
+  text: string
+  fontSize: number
+  fontFamily: string
+  /** 'normal' | 'bold' | 'italic' | 'bold italic' */
+  fontStyle: string
+  /** Horizontal alignment */
+  align: 'left' | 'center' | 'right'
+  /** Fill color in hex format */
+  fill: string
+}
+
+export interface EditorTextElement extends BaseElement {
+  type: 'text'
+  properties: TextElementProperties
+}
+
+// --- Image element ----------------------------------------------------------
+export interface ImageElementProperties {
+  /** Data URL or remote URL of the image */
+  src: string
+  /** Alternative text */
+  alt: string
+}
+
+export interface EditorImageElement extends BaseElement {
+  type: 'image'
+  // For images, width & height should always be defined, so we reiterate here
+  width: number
+  height: number
+  properties: ImageElementProperties
+}
+
+// Combined discriminated union of supported element types
+export type EditorElement = EditorTextElement | EditorImageElement
 
 // ---------------------------------------------------------------------------
 // Utility helpers – kept here to avoid extra files and keep the public API the
