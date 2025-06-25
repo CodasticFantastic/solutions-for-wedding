@@ -58,6 +58,11 @@ export function links() {
       href: 'https://shop.app',
     },
     {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    // Google Fonts for Acrylic Tile Editor
+    {
+      rel: 'stylesheet',
+      href: `https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Roboto&family=Lato&family=Montserrat&family=Poppins&family=Open+Sans&family=Playfair+Display&family=Raleway&family=PT+Serif&family=Merriweather&family=Nunito&family=Source+Sans+Pro&family=Oswald&family=Ubuntu&family=Work+Sans&family=Fira+Sans&family=Dancing+Script&family=Pacifico&family=Lobster&family=Rubik&family=Quicksand&family=Bebas+Neue&display=swap`,
+    },
   ]
 }
 

@@ -58,4 +58,35 @@ export const DEFAULT_TILE_BACKGROUNDS: BackgroundOption[] = [
     label: 'Srebrne lustro',
     src: mirrorSilverUrl,
   },
+]
+
+// ---------------------------------------------------------------------------
+// Font options available for Text elements
+// ---------------------------------------------------------------------------
+export const AVAILABLE_FONTS: string[] = [
+  'Inter',
+  'Roboto',
+  'Lato',
+  'Montserrat',
+  'Poppins',
+  'Open Sans',
+  'Playfair Display',
+  'Raleway',
+  'PT Serif',
+  'Merriweather',
+  'Nunito',
+  'Source Sans Pro',
+  'Oswald',
+  'Ubuntu',
+  'Work Sans',
+  'Fira Sans',
+  'Dancing Script',
+  'Pacifico',
+  'Lobster',
+  'Rubik',
+  'Quicksand',
+  'Bebas Neue',
+  'Archivo',
+  'Cinzel',
+  'Inconsolata',
 ] 

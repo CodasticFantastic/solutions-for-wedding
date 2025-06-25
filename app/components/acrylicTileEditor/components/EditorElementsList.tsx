@@ -2,6 +2,7 @@ import {Button} from '@/components/shadCn/ui/button'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {Badge} from '@/components/shadCn/ui/badge'
 import {CaseSensitive, ChevronDown, ChevronUp, Image, Trash2} from 'lucide-react'
+// eslint-disable-next-line import/no-named-as-default
 import clsx from 'clsx'
 
 // ---------------------------------------------------------------------------
@@ -13,11 +14,9 @@ export const EditorElementsList = () => {
   const selectedElementId = state.selectedElementId
   const elements = [...state.elements].slice().reverse() // highest first
   const selectElement = (id: string) => dispatch({type: 'SELECT_ELEMENT', payload: id})
-  const moveElement = (id: string, direction: 'UP' | 'DOWN') =>
-    dispatch({type: 'MOVE_ELEMENT', payload: {id, direction}})
+  const moveElement = (id: string, direction: 'UP' | 'DOWN') => dispatch({type: 'MOVE_ELEMENT', payload: {id, direction}})
   const removeElement = (id: string) => dispatch({type: 'REMOVE_ELEMENT', payload: id})
-  const isTopMost = (id: string) =>
-    state.elements.findIndex((e) => e.id === id) === state.elements.length - 1
+  const isTopMost = (id: string) => state.elements.findIndex((e) => e.id === id) === state.elements.length - 1
   const isBottomMost = (id: string) => state.elements.findIndex((e) => e.id === id) === 0
 
   return (
@@ -61,26 +60,12 @@ interface EditorElementListItemProps {
   onRemove: (e: React.MouseEvent) => void
 }
 
-const EditorElementListItem = ({
-  element,
-  selected,
-  topMost,
-  bottomMost,
-  onSelect,
-  onMove,
-  onRemove,
-}: EditorElementListItemProps) => {
-  const label =
-    element.type === 'text' ? element.properties.text || 'Tekst' : element.properties.alt || 'Obraz'
+const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect, onMove, onRemove}: EditorElementListItemProps) => {
+  const label = element.type === 'text' ? element.properties.text || 'Tekst' : element.properties.alt || 'Obraz'
 
   return (
     <li key={element.id}>
-      <Button
-        variant={selected ? 'outline' : 'ghost'}
-        size="sm"
-        className="w-full justify-start space-x-1 px-1"
-        onClick={onSelect}
-      >
+      <Button variant={selected ? 'outline' : 'ghost'} size="sm" className="w-full justify-start space-x-1 px-1" onClick={onSelect}>
         {/* Badge with element type */}
         <Badge variant="outline">{element.type === 'text' ? <CaseSensitive /> : <Image />}</Badge>
         {/* Label with ellipsis */}
@@ -98,10 +83,7 @@ const EditorElementListItem = ({
                 onMove('UP', e as any)
               }
             }}
-            className={clsx(
-              'pointer-events-auto grid h-5 w-5 place-items-center',
-              topMost && 'cursor-not-allowed opacity-30',
-            )}
+            className={clsx('pointer-events-auto grid h-5 w-5 place-items-center', topMost && 'cursor-not-allowed opacity-30')}
           >
             <ChevronUp className="pointer-events-none h-4 w-4" />
           </span>
@@ -117,10 +99,7 @@ const EditorElementListItem = ({
                 onMove('DOWN', e as any)
               }
             }}
-            className={clsx(
-              'pointer-events-auto grid h-5 w-5 place-items-center',
-              bottomMost && 'cursor-not-allowed opacity-30',
-            )}
+            className={clsx('pointer-events-auto grid h-5 w-5 place-items-center', bottomMost && 'cursor-not-allowed opacity-30')}
           >
             <ChevronDown className="pointer-events-none h-4 w-4" />
           </span>

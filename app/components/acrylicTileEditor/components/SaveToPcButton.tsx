@@ -20,7 +20,7 @@ export const SaveToPcButton = () => {
 
   return (
     <div className="relative w-full">
-      <Button variant="secondary" className="w-full" onClick={() => setOpen((o) => !o)}>
+      <Button variant="outline" className="w-full" onClick={() => setOpen((o) => !o)}>
         Zapisz na PC
         <ChevronDown className="ml-2 h-4 w-4" />
       </Button>
