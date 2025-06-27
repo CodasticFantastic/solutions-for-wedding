@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {Button} from '@/components/shadCn/ui/button'
-import {ChevronDown} from 'lucide-react'
+import {ChevronUp} from 'lucide-react'
 import {useTileExporter} from '../hooks/useTileExporter'
 
 /**
@@ -20,25 +20,17 @@ export const SaveToPcButton = () => {
 
   return (
     <div className="relative w-full">
-      <Button variant="outline" className="w-full" onClick={() => setOpen((o) => !o)}>
+      <Button className="w-full" onClick={() => setOpen((o) => !o)}>
         Zapisz na PC
-        <ChevronDown className="ml-2 h-4 w-4" />
+        <ChevronUp className="ml-2 h-4 w-4" />
       </Button>
 
       {open && (
-        <div className="absolute right-0 z-10 mt-1 w-full overflow-hidden rounded border bg-white shadow">
-          <button
-            type="button"
-            className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100"
-            onClick={() => download(true)}
-          >
+        <div className="absolute right-0 bottom-12 z-10 mt-1 w-full overflow-hidden rounded border bg-white shadow">
+          <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => download(true)}>
             PNG z tłem
           </button>
-          <button
-            type="button"
-            className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100"
-            onClick={() => download(false)}
-          >
+          <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => download(false)}>
             PNG bez tła
           </button>
         </div>

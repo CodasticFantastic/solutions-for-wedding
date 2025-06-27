@@ -69,13 +69,29 @@ export interface ImageElementProperties {
 export interface EditorImageElement extends BaseElement {
   type: 'image'
   // For images, width & height should always be defined, so we reiterate here
-  width: number
-  height: number
+  width?: number
+  height?: number
   properties: ImageElementProperties
 }
 
+// --- SVG element ----------------------------------------------------------
+export interface SvgElementProperties {
+  /** Raw SVG markup */
+  raw: string
+  /** Fill color in hex format – will be applied to all fills in the SVG */
+  fill: string
+}
+
+export interface EditorSvgElement extends BaseElement {
+  type: 'svg'
+  // For svg icons, width & height should always be defined, so we reiterate here
+  width?: number
+  height?: number
+  properties: SvgElementProperties
+}
+
 // Combined discriminated union of supported element types
-export type EditorElement = EditorTextElement | EditorImageElement
+export type EditorElement = EditorTextElement | EditorImageElement | EditorSvgElement
 
 // ---------------------------------------------------------------------------
 // Utility helpers – kept here to avoid extra files and keep the public API the

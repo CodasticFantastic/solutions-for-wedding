@@ -51,9 +51,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     case 'UPDATE_ELEMENT':
       return {
         ...state,
-        elements: state.elements.map((el) =>
-          el.id === action.payload.id ? {...el, ...action.payload.updates} : el,
-        ),
+        elements: state.elements.map((el) => (el.id === action.payload.id ? {...el, ...action.payload.updates} : el)),
       }
 
     case 'REMOVE_ELEMENT':
@@ -143,12 +141,7 @@ interface AcrylicTileEditorProviderProps {
   initialState?: Partial<EditorState>
 }
 
-export function AcrylicTileEditorProvider({
-  children,
-  template,
-  onSave,
-  initialState: customInitialState,
-}: AcrylicTileEditorProviderProps) {
+export function AcrylicTileEditorProvider({children, template, onSave, initialState: customInitialState}: AcrylicTileEditorProviderProps) {
   const initialState: EditorState = {
     canvas: {
       scale: 1,
@@ -168,11 +161,7 @@ export function AcrylicTileEditorProvider({
   // This ref will hold Konva Stage instance
   const stageRef = useRef<any>(null)
 
-  return (
-    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef}}>
-      {children}
-    </AcrylicTileEditorContext.Provider>
-  )
+  return <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef}}>{children}</AcrylicTileEditorContext.Provider>
 }
 
 // --- Hook ---

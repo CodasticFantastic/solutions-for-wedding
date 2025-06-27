@@ -9,6 +9,7 @@ import {useCanvasGestures} from '../hooks/useCanvasGestures'
 import {TextNode} from '../canvasElements/TextNode'
 import {ImageNode} from '../canvasElements/ImageNode'
 import {RotateCcw, RotateCw} from 'lucide-react'
+import {SvgNode} from '../canvasElements/SvgNode'
 
 export const Canvas = () => {
   const [isClient, setIsClient] = useState(false)
@@ -122,6 +123,17 @@ export const Canvas = () => {
             if (el.type === 'image') {
               return (
                 <ImageNode
+                  key={el.id}
+                  element={el}
+                  isSelected={isSelected}
+                  onSelect={() => handleElementSelect(el.id)}
+                  onChange={(updates) => handleElementChange(el.id, updates)}
+                />
+              )
+            }
+            if (el.type === 'svg') {
+              return (
+                <SvgNode
                   key={el.id}
                   element={el}
                   isSelected={isSelected}

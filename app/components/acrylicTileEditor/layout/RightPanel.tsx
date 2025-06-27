@@ -4,6 +4,8 @@ import {SaveToPcButton} from '../components/SaveToPcButton'
 import {AddTextButton} from '../components/AddTextButton'
 import {AddImageButton} from '../components/AddImageButton'
 import {TextEditor} from '../components/TextEditor'
+import {ImageLibraryButton} from '../components/ImageLibraryButton'
+import {SvgEditor} from '../components/SvgEditor'
 
 export const RightPanel = () => {
   const {state, dispatch, onSave} = useAcrylicTileEditor()
@@ -14,15 +16,16 @@ export const RightPanel = () => {
       <div className="space-y-2">
         <AddTextButton />
         <AddImageButton />
-        <SaveToPcButton />
+        <ImageLibraryButton />
       </div>
 
       {/* Properties */}
       <TextEditor />
+      <SvgEditor />
 
-      <Button onClick={() => onSave?.({template: state.template, elements: state.elements})} variant="default" className="mt-auto w-full">
-        Zapisz projekt
-      </Button>
+      <div className="mt-auto">
+        <SaveToPcButton />
+      </div>
     </div>
   )
 }
