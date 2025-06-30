@@ -80,7 +80,25 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
         onTransform={onTransform}
         onTransformEnd={onTransformEnd}
       />
-      {isSelected && <Transformer ref={transformerRef} />}
+      {isSelected && (
+        <Transformer
+          ref={transformerRef}
+          anchorStyleFunc={(anchor) => {
+            anchor.cornerRadius(1)
+
+            if (
+              anchor.hasName('top-left') ||
+              anchor.hasName('top-right') ||
+              anchor.hasName('top-center') ||
+              anchor.hasName('bottom-left') ||
+              anchor.hasName('bottom-right') ||
+              anchor.hasName('bottom-center')
+            ) {
+              anchor.scale({x: 0, y: 0})
+            }
+          }}
+        />
+      )}
     </>
   )
 }

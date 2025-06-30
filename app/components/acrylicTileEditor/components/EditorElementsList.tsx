@@ -2,8 +2,7 @@ import {Button} from '@/components/shadCn/ui/button'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {Badge} from '@/components/shadCn/ui/badge'
 import {CaseSensitive, ChevronDown, ChevronUp, Image, Trash2} from 'lucide-react'
-// eslint-disable-next-line import/no-named-as-default
-import clsx from 'clsx'
+import {cn} from '@/lib/shadCn/utils'
 
 // ---------------------------------------------------------------------------
 // List of elements
@@ -83,7 +82,7 @@ const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect
                 onMove('UP', e as any)
               }
             }}
-            className={clsx('pointer-events-auto grid h-5 w-5 place-items-center', topMost && 'cursor-not-allowed opacity-30')}
+            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', topMost && 'cursor-not-allowed opacity-30')}
           >
             <ChevronUp className="pointer-events-none h-4 w-4" />
           </span>
@@ -99,7 +98,7 @@ const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect
                 onMove('DOWN', e as any)
               }
             }}
-            className={clsx('pointer-events-auto grid h-5 w-5 place-items-center', bottomMost && 'cursor-not-allowed opacity-30')}
+            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', bottomMost && 'cursor-not-allowed opacity-30')}
           >
             <ChevronDown className="pointer-events-none h-4 w-4" />
           </span>

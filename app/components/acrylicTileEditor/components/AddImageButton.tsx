@@ -25,7 +25,7 @@ export const AddImageButton = () => {
             // width: 200,
             // height: ,
             // height: 200,
-            rotation: 50,
+            rotation: 0,
             properties: {src: evt.target?.result as string, alt: file.name},
           },
         })
