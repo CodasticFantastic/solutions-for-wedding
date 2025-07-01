@@ -51,7 +51,19 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
     case 'UPDATE_ELEMENT':
       return {
         ...state,
-        elements: state.elements.map((el) => (el.id === action.payload.id ? {...el, ...action.payload.updates} : el)),
+        elements: state.elements.map((el) => {
+          if (el.id !== action.payload.id) return el
+
+          if (el.type === 'text' && action.payload.updates.type === 'text') {
+            return {...el, ...(action.payload.updates as Partial<typeof el>)}
+          }
+
+          if (el.type === 'image' && action.payload.updates.type === 'image') {
+            return {...el, ...(action.payload.updates as Partial<typeof el>)}
+          }
+
+          return el
+        }),
       }
 
     case 'REMOVE_ELEMENT':
@@ -129,6 +141,7 @@ interface AcrylicTileEditorContextType {
   dispatch: React.Dispatch<EditorAction>
   onSave?: (data: any) => void
   stageRef: React.RefObject<any>
+  isLoggedIn: boolean
 }
 
 const AcrylicTileEditorContext = createContext<AcrylicTileEditorContextType | undefined>(undefined)
@@ -139,9 +152,16 @@ interface AcrylicTileEditorProviderProps {
   template: AcrylicTileTemplate
   onSave?: (data: any) => void
   initialState?: Partial<EditorState>
+  isLoggedIn: boolean
 }
 
-export function AcrylicTileEditorProvider({children, template, onSave, initialState: customInitialState}: AcrylicTileEditorProviderProps) {
+export function AcrylicTileEditorProvider({
+  children,
+  template,
+  onSave,
+  initialState: customInitialState,
+  isLoggedIn,
+}: AcrylicTileEditorProviderProps) {
   const initialState: EditorState = {
     canvas: {
       scale: 1,
@@ -161,7 +181,11 @@ export function AcrylicTileEditorProvider({children, template, onSave, initialSt
   // This ref will hold Konva Stage instance
   const stageRef = useRef<any>(null)
 
-  return <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef}}>{children}</AcrylicTileEditorContext.Provider>
+  return (
+    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef, isLoggedIn}}>
+      {children}
+    </AcrylicTileEditorContext.Provider>
+  )
 }
 
 // --- Hook ---

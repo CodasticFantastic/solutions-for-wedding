@@ -8,11 +8,12 @@ interface AcrylicTileEditorProps {
   template: AcrylicTileTemplate
   onSave?: (data: any) => void
   initialState?: Partial<EditorState>
+  isLoggedIn: boolean
 }
 
-export function AcrylicTileEditor({template, onSave, initialState}: AcrylicTileEditorProps) {
+export function AcrylicTileEditor({template, onSave, initialState, isLoggedIn}: AcrylicTileEditorProps) {
   return (
-    <AcrylicTileEditorProvider template={template} onSave={onSave} initialState={initialState}>
+    <AcrylicTileEditorProvider template={template} onSave={onSave} initialState={initialState} isLoggedIn={isLoggedIn}>
       <div className="flex h-[calc(100vh-64px)]">
         <div className="bg-background w-80 border-r">
           <LeftPanel />

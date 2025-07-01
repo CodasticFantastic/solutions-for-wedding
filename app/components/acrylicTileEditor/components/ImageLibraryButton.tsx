@@ -61,19 +61,13 @@ export const ImageLibraryButton = () => {
         <SheetHeader>
           <SheetTitle>Baza obrazków</SheetTitle>
         </SheetHeader>
-        <div className="p-4 space-y-4 overflow-y-auto flex-1">
+        <div className="flex-1 space-y-4 overflow-y-auto p-4">
           {/* Color picker */}
           <div className="space-y-1">
             <label htmlFor="lib-color" className="text-sm font-medium">
               Kolor ikony
             </label>
-            <input
-              id="lib-color"
-              type="color"
-              value={color}
-              onChange={(e) => setColor(e.target.value)}
-              className="h-8 w-full p-0"
-            />
+            <input id="lib-color" type="color" value={color} onChange={(e) => setColor(e.target.value)} className="h-8 w-full p-0" />
           </div>
 
           {/* Icon grid */}
@@ -85,7 +79,7 @@ export const ImageLibraryButton = () => {
                   key={path}
                   type="button"
                   onClick={() => handleAddSvg(raw)}
-                  className="aspect-square rounded border hover:bg-accent flex items-center justify-center"
+                  className="hover:bg-accent flex aspect-square items-center justify-center rounded border"
                 >
                   <img src={previewSrc} alt="icon" className="max-h-full max-w-full" />
                 </button>
@@ -93,9 +87,9 @@ export const ImageLibraryButton = () => {
             })}
           </div>
         </div>
-        <div className="p-4 border-t">
+        <div className="border-t p-4">
           <SheetClose asChild>
-            <Button variant="secondary" className="w-full">
+            <Button variant="default" className="w-full">
               Zamknij
             </Button>
           </SheetClose>
@@ -103,4 +97,4 @@ export const ImageLibraryButton = () => {
       </SheetContent>
     </Sheet>
   )
-} 
+}

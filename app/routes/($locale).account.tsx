@@ -85,8 +85,8 @@ const NAV_ITEMS = [
     icon: MapPinIcon,
   },
   {
-    to: '/account/templates',
-    label: 'Moje szablony',
+    to: '/account/designs',
+    label: 'Moje projekty',
     icon: ImageIcon,
   },
 ]

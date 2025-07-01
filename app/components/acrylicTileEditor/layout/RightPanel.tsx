@@ -6,6 +6,7 @@ import {AddImageButton} from '../components/AddImageButton'
 import {TextEditor} from '../components/TextEditor'
 import {ImageLibraryButton} from '../components/ImageLibraryButton'
 import {SvgEditor} from '../components/SvgEditor'
+import {SaveToAccountButton} from '../components/SaveToAccountButton'
 
 export const RightPanel = () => {
   const {state, dispatch, onSave} = useAcrylicTileEditor()
@@ -23,8 +24,9 @@ export const RightPanel = () => {
       <TextEditor />
       <SvgEditor />
 
-      <div className="mt-auto">
+      <div className="mt-auto space-y-2">
         <SaveToPcButton />
+        <SaveToAccountButton />
       </div>
     </div>
   )
