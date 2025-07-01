@@ -3,8 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-
-# React Router Import Rule for Hydrogen
+# React Router Import Rule for Hydrogen (Default rules provided by Shopify developers team)
 
 ## Overview
 
@@ -50,3 +49,27 @@ import { useLoaderData, Link, Form, useActionData, useNavigation, useSubmit } fr
 When working in this codebase, always follow the React Router patterns that are already established in the existing code.
 
 For more information, consult the official Remix to React Router upgrade guide: https://reactrouter.com/upgrading/remix
+
+# Custom Rules Provided by developer of this App
+0. This project was initialized with set of recommended Shopify options via ```npm create @shopify/hydrogen@latest -- --quickstart```
+1. Always remember we are working with Shopify Hydrogen Remix storefront
+2. Shopify headless storefronts docs: https://shopify.dev/docs/storefronts/headless
+3. Shopify GraphQL Admin API docs: https://shopify.dev/docs/api/admin-graphql/latest
+4. Shopify GraphQL Storefront API docs: https://shopify.dev/docs/api/storefront/latest
+5. Shopify Hydrogen docs: https://shopify.dev/docs/api/hydrogen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
