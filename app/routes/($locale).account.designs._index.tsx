@@ -1,7 +1,20 @@
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
-import {Link, useLoaderData} from 'react-router'
+import {Link, useLoaderData, useFetcher, useRevalidator, useParams} from 'react-router'
 import {Button} from '@/components/shadCn/ui/button'
 import {METAOBJECTS_BY_IDS_QUERY} from '@/graphql/storefront/queries/metaobjectsByIds.query'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/shadCn/ui/alert-dialog'
+import {EditIcon, Trash2} from 'lucide-react'
+import {useState} from 'react'
 
 export async function loader({context}: LoaderFunctionArgs) {
   await context.customerAccount.handleAuthStatus()
@@ -9,7 +22,11 @@ export async function loader({context}: LoaderFunctionArgs) {
   // 1) load designs metafield json
   const metaQuery = /* GraphQL */ `
     query DesignsMeta {
-      customer { metafield(namespace:"custom", key:"designs") { value } }
+      customer {
+        metafield(namespace: "custom", key: "designs") {
+          value
+        }
+      }
     }
   `
   const metaRes = await context.customerAccount.query(metaQuery)
@@ -43,6 +60,34 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function DesignsPage() {
   const {designs} = useLoaderData<typeof loader>()
+  const {locale = ''} = useParams<{locale: string}>()
+  const fetcher = useFetcher()
+  const revalidator = useRevalidator()
+  const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id)
+    try {
+      const endpointBase = locale ? `/${locale}` : ''
+      fetcher.submit(
+        {id},
+        {
+          method: 'POST',
+          action: `${endpointBase}/api/account/designs/delete`,
+        },
+      )
+
+      // Refresh the page data after a short delay
+      setTimeout(() => {
+        revalidator.revalidate()
+      }, 500)
+    } catch (error) {
+      console.error('Error deleting design:', error)
+      alert('Nie udało się usunąć projektu. Spróbuj ponownie.')
+    } finally {
+      setDeletingId(null)
+    }
+  }
 
   if (!designs.length) {
     return <p>Nie masz jeszcze zapisanych projektów.</p>
@@ -57,9 +102,41 @@ export default function DesignsPage() {
             <p className="mb-2 truncate font-medium" title={d.title}>
               {d.title}
             </p>
-            <Button asChild size="sm" className="w-full">
-              <Link to={`/konfigurator?design=${d.handle}`}>Edytuj</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild size="sm" className="flex-1">
+                <Link to={`/konfigurator?design=${d.handle}`}>
+                  <EditIcon className="mr-2 h-4 w-4" />
+                  Edytuj
+                </Link>
+              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm" className="flex-1" disabled={deletingId === d.id}>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {deletingId === d.id ? 'Usuwanie...' : 'Usuń'}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Usuń projekt</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Czy na pewno chcesz usunąć projekt &quot;{d.title}&quot;? <br />
+                      Ta operacja jest nieodwracalna i projekt zostanie usunięty na zawsze.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleDelete(d.id)} className="bg-transparent p-0 hover:bg-transparent">
+                      <Button variant="destructive" size="sm" className="w-full">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Usuń projekt
+                      </Button>
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </div>
         ))}
       </div>

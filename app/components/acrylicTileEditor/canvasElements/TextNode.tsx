@@ -17,14 +17,14 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
   // Calculate initial dimensions if not set
   const getInitialDimensions = () => {
     if (element.width && element.height) {
-      return { width: element.width, height: element.height }
+      return {width: element.width, height: element.height}
     }
-    
+
     // Estimate dimensions based on text content and font size
     const text = element.properties.text || 'Nowy tekst'
     const fontSize = element.properties.fontSize || 124
     const fontFamily = element.properties.fontFamily || 'Inter'
-    
+
     // Create a temporary canvas to measure text
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
@@ -33,11 +33,11 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
       const metrics = ctx.measureText(text)
       const estimatedWidth = Math.max(metrics.width + 20, 100) // Add some padding
       const estimatedHeight = fontSize + 20 // Add some padding
-      return { width: estimatedWidth, height: estimatedHeight }
+      return {width: estimatedWidth, height: estimatedHeight}
     }
-    
+
     // Fallback dimensions
-    return { width: 200, height: 100 }
+    return {width: 200, height: 100}
   }
 
   const initialDimensions = getInitialDimensions()
@@ -57,7 +57,6 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
     // Allow to preview the transformation on live + update the height of the node if the text is wrapped
     const node = shapeRef.current
     const scaleX = node.scaleX()
-    const scaleY = node.scaleY()
 
     // Reset scale so further transforms are applied on fresh dimensions
     node.scaleX(1)
@@ -74,7 +73,7 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
   const onTransformEnd = () => {
     const node = shapeRef.current
     const scaleX = node.scaleX()
-    const scaleY = node.scaleY()
+
     node.scaleX(1)
     node.scaleY(1)
 

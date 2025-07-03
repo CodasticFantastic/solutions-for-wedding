@@ -189,15 +189,15 @@ export const TextEditor = () => {
                   <PopoverTrigger>
                     <InfoIcon className="cursor-pointer" size={16} />
                   </PopoverTrigger>
-                  <PopoverContent className="border-border w-60 rounded-md bg-gray-50 p-4 shadow-md">
+                  <PopoverContent className="border-border z-100 w-60 rounded-md bg-gray-50 p-4 shadow-md">
                     Pole z wariantami pozwala na dynamiczne generowanie tekstu na podstawie danych z formularza.
                     <br />
                     <br />
                     Używaj np. kiedy przygotowujesz listę gości.
                     <br />
                     <br />
-                    Po zaznaczeniu pola, na lewym pasku dostępny będzie edytor wariantów w którym będziesz mógł na żywo dodawać warianty
-                    swoich treści.
+                    Po zaznaczeniu pola, na prawym pasku dostępny będzie edytor wariantów w którym będziesz mógł na żywo dodawać warianty
+                    swoich treści oraz edytować ich umiejscowienie.
                   </PopoverContent>
                 </Popover>
               </div>
@@ -249,7 +249,7 @@ export const TextEditor = () => {
                 id="prop-size"
                 type="number"
                 min={0}
-                max={200}
+                max={1000}
                 value={(selectedElement.properties.fontSize || 24).toString()}
                 onChange={updateElementFontSize}
                 className="w-full"
