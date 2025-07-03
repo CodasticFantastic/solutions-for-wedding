@@ -1,5 +1,5 @@
 import {createContext, useContext, useReducer, ReactNode, useRef} from 'react'
-import {AcrylicTileTemplate, EditorState, EditorElement} from './acrylicTileEditor.types'
+import {AcrylicTileTemplate, EditorState, EditorElement, DynamicVariant} from './acrylicTileEditor.types'
 
 // --- Akcje ---
 type EditorAction =
@@ -12,8 +12,12 @@ type EditorAction =
   | {type: 'REMOVE_ELEMENT'; payload: string}
   | {type: 'RESET_CANVAS'}
   | {type: 'UPDATE_TEMPLATE'; payload: Partial<AcrylicTileTemplate>}
-  | {type: 'LOAD_PROJECT'; payload: {template: AcrylicTileTemplate; elements: EditorElement[]}}
+  | {type: 'LOAD_PROJECT'; payload: {template: AcrylicTileTemplate; elements: EditorElement[]; dynamicVariants?: DynamicVariant[]; activeVariantId?: string}}
   | {type: 'MOVE_ELEMENT'; payload: {id: string; direction: 'UP' | 'DOWN'}}
+  | {type: 'ADD_VARIANT'; payload: DynamicVariant}
+  | {type: 'UPDATE_VARIANT'; payload: {id: string; updates: Partial<DynamicVariant>}}
+  | {type: 'SET_ACTIVE_VARIANT'; payload: string | undefined}
+  | {type: 'REMOVE_VARIANT'; payload: string}
 
 // --- Reducer ---
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -48,23 +52,67 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         elements: [...state.elements, action.payload],
       }
 
-    case 'UPDATE_ELEMENT':
+    case 'UPDATE_ELEMENT': {
+      const positionalKeys = ['x', 'y', 'width', 'height', 'rotation'] as const
+
+      const elementToUpdate = state.elements.find((e) => e.id === action.payload.id)
+      if (!elementToUpdate) return state
+
+      // Split updates into positional (variant-specific) and global updates
+      const positionalUpdates: Partial<EditorElement> = {}
+      const globalUpdates: Partial<EditorElement> = {}
+
+      for (const [key, value] of Object.entries(action.payload.updates)) {
+        if (key === 'properties') {
+          // always global properties
+          ;(globalUpdates as any).properties = value
+        } else if (positionalKeys.includes(key as any)) {
+          ;(positionalUpdates as any)[key] = value
+        } else {
+          ;(globalUpdates as any)[key] = value
+        }
+      }
+
+      let newDynamicVariants = state.dynamicVariants
+
+      // If there is active variant AND element is dynamic, store positional updates in overrides
+      if (state.activeVariantId && (elementToUpdate as any).properties?.isDynamic) {
+        newDynamicVariants = (state.dynamicVariants || []).map((v) => {
+          if (v.id !== state.activeVariantId) return v
+
+          const prevOverrides = v.overrides?.[elementToUpdate.id] || {}
+          return {
+            ...v,
+            overrides: {
+              ...v.overrides,
+              [elementToUpdate.id]: {
+                ...prevOverrides,
+                ...positionalUpdates,
+              },
+            },
+          }
+        })
+      } else {
+        // If no active variant or element not dynamic, apply positional updates globally
+        Object.assign(globalUpdates, positionalUpdates)
+      }
+
       return {
         ...state,
         elements: state.elements.map((el) => {
           if (el.id !== action.payload.id) return el
-
-          if (el.type === 'text' && action.payload.updates.type === 'text') {
-            return {...el, ...(action.payload.updates as Partial<typeof el>)}
+          return {
+            ...el,
+            ...(globalUpdates as Partial<EditorElement>),
+            properties: {
+              ...el.properties,
+              ...(globalUpdates as any).properties,
+            },
           }
-
-          if (el.type === 'image' && action.payload.updates.type === 'image') {
-            return {...el, ...(action.payload.updates as Partial<typeof el>)}
-          }
-
-          return el
         }),
+        dynamicVariants: newDynamicVariants,
       }
+    }
 
     case 'REMOVE_ELEMENT':
       return {
@@ -122,12 +170,39 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         ...state,
         template: action.payload.template,
         elements: action.payload.elements,
+        dynamicVariants: action.payload.dynamicVariants || [],
+        activeVariantId: action.payload.activeVariantId,
         selectedElementId: null,
         canvas: {
           ...state.canvas,
           width: action.payload.template.width,
           height: action.payload.template.height,
         },
+      }
+
+    case 'ADD_VARIANT':
+      return {
+        ...state,
+        dynamicVariants: [...(state.dynamicVariants || []), action.payload],
+      }
+
+    case 'UPDATE_VARIANT':
+      return {
+        ...state,
+        dynamicVariants: (state.dynamicVariants || []).map((v) => (v.id === action.payload.id ? {...v, ...action.payload.updates} : v)),
+      }
+
+    case 'SET_ACTIVE_VARIANT':
+      return {
+        ...state,
+        activeVariantId: action.payload,
+      }
+
+    case 'REMOVE_VARIANT':
+      return {
+        ...state,
+        dynamicVariants: (state.dynamicVariants || []).filter((v) => v.id !== action.payload),
+        activeVariantId: state.activeVariantId === action.payload ? undefined : state.activeVariantId,
       }
 
     default:
@@ -173,6 +248,8 @@ export function AcrylicTileEditorProvider({
     selectedElementId: null,
     elements: [],
     template,
+    dynamicVariants: [],
+    activeVariantId: undefined,
     ...customInitialState,
   }
 

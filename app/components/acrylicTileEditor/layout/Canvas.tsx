@@ -10,6 +10,7 @@ import {TextNode} from '../canvasElements/TextNode'
 import {ImageNode} from '../canvasElements/ImageNode'
 import {RotateCcw, RotateCw} from 'lucide-react'
 import {SvgNode} from '../canvasElements/SvgNode'
+import type {DynamicVariant} from '../acrylicTileEditor.types'
 
 export const Canvas = () => {
   const [isClient, setIsClient] = useState(false)
@@ -107,8 +108,39 @@ export const Canvas = () => {
 
         {/* elements (also clipped) */}
         <Layer>
-          {state.elements.map((el) => {
+          {state.elements.map((originalEl) => {
+            let el = originalEl
             const isSelected = state.selectedElementId === el.id
+
+            // Apply dynamic text substitution if needed
+            if (el.type === 'text' && el.properties.isDynamic && el.properties.fieldKey) {
+              const activeVar: DynamicVariant | undefined = (state.dynamicVariants || []).find(
+                (v) => v.id === state.activeVariantId,
+              )
+              if (activeVar) {
+                const newText = activeVar.values[el.properties.fieldKey] ?? el.properties.text
+                el = {
+                  ...el,
+                  properties: {
+                    ...el.properties,
+                    text: newText,
+                  },
+                } as typeof el
+              }
+            }
+
+            // Merge positional overrides for active variant
+            if (state.activeVariantId) {
+              const variant = (state.dynamicVariants || []).find((v) => v.id === state.activeVariantId)
+              const ov = variant?.overrides?.[el.id]
+              if (ov) {
+                el = {
+                  ...el,
+                  ...ov,
+                } as typeof el
+              }
+            }
+
             if (el.type === 'text') {
               return (
                 <TextNode

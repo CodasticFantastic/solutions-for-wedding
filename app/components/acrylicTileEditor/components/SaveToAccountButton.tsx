@@ -24,6 +24,8 @@ export const SaveToAccountButton = () => {
         design_json: {
           template: state.template,
           elements: state.elements,
+          dynamicVariants: state.dynamicVariants,
+          activeVariantId: state.activeVariantId,
         },
       }
 

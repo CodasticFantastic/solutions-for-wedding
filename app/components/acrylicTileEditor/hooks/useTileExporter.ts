@@ -13,7 +13,7 @@ export interface ExportOptions {
  * Dzięki temu cała logika pozostaje oddzielona od warstwy UI.
  */
 export function useTileExporter() {
-  const {stageRef} = useAcrylicTileEditor()
+  const {stageRef, state, dispatch} = useAcrylicTileEditor()
 
   const exportAsPng = useCallback(
     ({includeBackground, pixelRatio = 2, autoDownload = true, fileName}: ExportOptions) => {
@@ -51,5 +51,38 @@ export function useTileExporter() {
     [stageRef],
   )
 
-  return {exportAsPng}
+  const waitNextFrame = () => new Promise((res) => requestAnimationFrame(() => res(null)))
+
+  const exportAsPngMulti = useCallback(
+    async ({includeBackground, pixelRatio = 2, autoDownload = true, fileName}: ExportOptions & {fileNamePattern?: string}) => {
+      const variants = state.dynamicVariants || []
+      if (variants.length === 0) {
+        exportAsPng({includeBackground, pixelRatio, autoDownload, fileName})
+        return
+      }
+
+      const originalVariantId = state.activeVariantId
+
+      const patternTemplate = fileName || 'tile-{label}-{n}.png'
+
+      for (let i = 0; i < variants.length; i++) {
+        const variant = variants[i]
+        dispatch({type: 'SET_ACTIVE_VARIANT', payload: variant.id})
+        // wait for React to re-render canvas
+        await waitNextFrame()
+        const resolvedName = patternTemplate
+          .replace('{label}', variant.label.replace(/[^a-z0-9_-]/gi, '_'))
+          .replace('{n}', (i + 1).toString())
+        exportAsPng({includeBackground, pixelRatio, autoDownload, fileName: resolvedName})
+        // small delay to allow file dialog to proceed
+        await waitNextFrame()
+      }
+
+      // restore original variant
+      dispatch({type: 'SET_ACTIVE_VARIANT', payload: originalVariantId})
+    },
+    [state.dynamicVariants, state.activeVariantId, exportAsPng, dispatch],
+  )
+
+  return {exportAsPng, exportAsPngMulti}
 } 

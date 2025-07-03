@@ -12,6 +12,8 @@ export interface EditorState {
   elements: EditorElement[]
   template: AcrylicTileTemplate
   currentFlowStep?: 'size' | 'background' | 'design'
+  dynamicVariants?: DynamicVariant[]
+  activeVariantId?: string
 }
 
 export interface AcrylicTileTemplate {
@@ -51,6 +53,10 @@ export interface TextElementProperties {
   align: 'left' | 'center' | 'right'
   /** Fill color in hex format */
   fill: string
+  /** Whether this text field should be treated as dynamic (auto-generated) */
+  isDynamic?: boolean
+  /** Identifier key used to map values for dynamic generation */
+  fieldKey?: string
 }
 
 export interface EditorTextElement extends BaseElement {
@@ -141,4 +147,21 @@ export function generateFullTemplate({
     backgroundImage,
     orientation,
   }
+}
+
+// ---------------------------------------------------------------------------
+// Dynamic variants – used for automatic generation of many versions (e.g. list
+// of guest names). These types are optional for now and will be used in later
+// implementation stages, but we add them early so the state shape is known.
+// ---------------------------------------------------------------------------
+
+export interface DynamicVariant {
+  /** Variant id (unique within the project, e.g. "v1") */
+  id: string
+  /** Display label, can be the substituted value(s) */
+  label: string
+  /** Map fieldKey -> value to substitute in dynamic text elements */
+  values: Record<string, string>
+  /** Optional per-element overrides of position / size / rotation */
+  overrides?: Record<string, Partial<BaseElement>>
 }

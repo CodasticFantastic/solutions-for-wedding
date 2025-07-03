@@ -6,6 +6,7 @@ export type {
   CanvasState,
   EditorElement,
   EditorState,
+  DynamicVariant,
 } from './acrylicTileEditor.types';
 
 export {

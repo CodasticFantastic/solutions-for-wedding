@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {Button} from '@/components/shadCn/ui/button'
 import {ChevronUp} from 'lucide-react'
 import {useTileExporter} from '../hooks/useTileExporter'
+import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 /**
  * SaveToPcButton – lets the user export the current tile as a PNG file.
@@ -11,10 +12,16 @@ import {useTileExporter} from '../hooks/useTileExporter'
  */
 export const SaveToPcButton = () => {
   const [open, setOpen] = useState(false)
-  const {exportAsPng} = useTileExporter()
+  const {exportAsPng, exportAsPngMulti} = useTileExporter()
+  const {state} = useAcrylicTileEditor()
 
   const download = (includeBackground: boolean) => {
     exportAsPng({includeBackground})
+    setOpen(false)
+  }
+
+  const downloadAll = (includeBackground: boolean) => {
+    exportAsPngMulti({includeBackground})
     setOpen(false)
   }
 
@@ -33,6 +40,17 @@ export const SaveToPcButton = () => {
           <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => download(false)}>
             PNG bez tła
           </button>
+          {state.dynamicVariants && state.dynamicVariants.length > 0 && (
+            <>
+              <hr />
+              <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => downloadAll(true)}>
+                PNG wszystkie warianty (z tłem)
+              </button>
+              <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => downloadAll(false)}>
+                PNG wszystkie warianty (bez tła)
+              </button>
+            </>
+          )}
         </div>
       )}
     </div>

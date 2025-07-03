@@ -1,4 +1,4 @@
-import {AcrylicTileEditor, AcrylicTileTemplate, generateFullTemplate, EditorState, EditorElement} from '@/components/acrylicTileEditor'
+import {AcrylicTileEditor, AcrylicTileTemplate, generateFullTemplate, EditorElement, DynamicVariant} from '@/components/acrylicTileEditor'
 import {type LoaderFunctionArgs, data as json} from '@shopify/remix-oxygen'
 import {useLoaderData, useParams} from 'react-router'
 import {useMemo} from 'react'
@@ -97,11 +97,21 @@ export default function ConfiguratorPage() {
     }
 
     try {
-      const parsedTemplate = JSON.parse(design.designJson) as {template: AcrylicTileTemplate; elements: EditorElement[]}
+      const parsedTemplate = JSON.parse(design.designJson) as {
+        template: AcrylicTileTemplate
+        elements: EditorElement[]
+        dynamicVariants?: DynamicVariant[]
+        activeVariantId?: string
+      }
 
       return {
         template: parsedTemplate.template,
-        initialState: {elements: parsedTemplate.elements, template: parsedTemplate.template},
+        initialState: {
+          elements: parsedTemplate.elements,
+          template: parsedTemplate.template,
+          dynamicVariants: parsedTemplate.dynamicVariants ?? [],
+          activeVariantId: parsedTemplate.activeVariantId,
+        },
         designId: design.id,
       }
     } catch (e) {
