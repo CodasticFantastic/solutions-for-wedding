@@ -30,9 +30,9 @@ export const SaveToAccountButton = () => {
       }
 
       await onSave(payload)
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      alert('Nie udało się zapisać projektu. Spróbuj ponownie.')
+      alert(err.message || 'Nie udało się zapisać projektu. Spróbuj ponownie.')
     } finally {
       setSaving(false)
     }
