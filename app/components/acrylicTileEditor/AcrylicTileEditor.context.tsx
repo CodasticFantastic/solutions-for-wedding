@@ -50,6 +50,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         elements: [...state.elements, action.payload],
+        selectedElementId: action.payload.id,
       }
 
     case 'UPDATE_ELEMENT': {

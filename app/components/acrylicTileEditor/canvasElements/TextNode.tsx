@@ -14,12 +14,40 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
 
+  // Calculate initial dimensions if not set
+  const getInitialDimensions = () => {
+    if (element.width && element.height) {
+      return { width: element.width, height: element.height }
+    }
+    
+    // Estimate dimensions based on text content and font size
+    const text = element.properties.text || 'Nowy tekst'
+    const fontSize = element.properties.fontSize || 124
+    const fontFamily = element.properties.fontFamily || 'Inter'
+    
+    // Create a temporary canvas to measure text
+    const canvas = document.createElement('canvas')
+    const ctx = canvas.getContext('2d')
+    if (ctx) {
+      ctx.font = `${fontSize}px ${fontFamily}`
+      const metrics = ctx.measureText(text)
+      const estimatedWidth = Math.max(metrics.width + 20, 100) // Add some padding
+      const estimatedHeight = fontSize + 20 // Add some padding
+      return { width: estimatedWidth, height: estimatedHeight }
+    }
+    
+    // Fallback dimensions
+    return { width: 200, height: 100 }
+  }
+
+  const initialDimensions = getInitialDimensions()
+
   useEffect(() => {
-    if (isSelected && transformerRef.current) {
+    if (isSelected && transformerRef.current && shapeRef.current) {
       transformerRef.current.nodes([shapeRef.current])
       transformerRef.current.getLayer().batchDraw()
     }
-  }, [isSelected])
+  }, [isSelected, initialDimensions])
 
   const onDragEnd = (e: Konva.KonvaEventObject<MouseEvent>) => {
     onChange({x: e.target.x(), y: e.target.y()})
@@ -68,6 +96,8 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
       <Text
         ref={shapeRef}
         {...element}
+        width={initialDimensions.width}
+        height={initialDimensions.height}
         text={element.properties.text || 'Nowy tekst'}
         fontSize={element.properties.fontSize || 124}
         fontFamily={element.properties.fontFamily || 'Inter'}
