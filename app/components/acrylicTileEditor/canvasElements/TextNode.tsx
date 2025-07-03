@@ -42,6 +42,45 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
 
   const initialDimensions = getInitialDimensions()
 
+  // Function to calculate text height based on current properties
+  const calculateTextHeight = () => {
+    if (!shapeRef.current) return
+
+    const node = shapeRef.current
+    const currentWidth = node.width()
+    
+    // Only recalculate if we have a valid width
+    if (currentWidth > 0) {
+      // Temporarily set height to auto to get the actual text height
+      node.height('auto')
+      const actualHeight = node.height()
+      
+      // Update the element with the new height while keeping the width
+      onChange({
+        height: actualHeight,
+      })
+    }
+  }
+
+  // Auto-update height when text content or font properties change
+  useEffect(() => {
+    if (shapeRef.current) {
+      // Use setTimeout to ensure the text has been rendered
+      const timeoutId = setTimeout(() => {
+        calculateTextHeight()
+      }, 0)
+      
+      return () => clearTimeout(timeoutId)
+    }
+  }, [
+    element.properties.text,
+    element.properties.fontSize,
+    element.properties.fontFamily,
+    element.properties.fontStyle,
+    element.width, // Recalculate when width changes
+    onChange, // Include onChange in dependencies
+  ])
+
   useEffect(() => {
     if (isSelected && transformerRef.current && shapeRef.current) {
       transformerRef.current.nodes([shapeRef.current])
