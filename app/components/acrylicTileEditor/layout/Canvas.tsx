@@ -76,7 +76,12 @@ export const Canvas = () => {
         x={state.canvas.x}
         y={state.canvas.y}
         {...stageGestures}
-        onClick={(e: any) => e.target === e.target.getStage() && dispatch({type: 'SELECT_ELEMENT', payload: null})}
+        onClick={(e: any) => {
+          // Only deselect if clicking directly on the stage (not on any shape)
+          if (e.target === e.target.getStage()) {
+            dispatch({type: 'SELECT_ELEMENT', payload: null})
+          }
+        }}
       >
         <Layer>
           {/* Base background color */}
@@ -89,6 +94,7 @@ export const Canvas = () => {
             stroke="#e5e7eb"
             strokeWidth={5}
             cornerRadius={CORNER_RADIUS}
+            onClick={() => dispatch({type: 'SELECT_ELEMENT', payload: null})}
           />
 
           {/* Optional background image */}
