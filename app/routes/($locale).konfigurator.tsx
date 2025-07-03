@@ -90,7 +90,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 export default function ConfiguratorPage() {
   const {locale = ''} = useParams<{locale: string}>()
   const {design, isLoggedIn} = useLoaderData<LoaderPayload>()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const memo = useMemo(() => {
     if (!design) {
@@ -137,7 +137,8 @@ export default function ConfiguratorPage() {
       handle?: string
       error?: string
     }
-    if (!resp.ok) throw new Error(error ?? 'Błąd zapisu projektu')
+
+    if (!resp.ok || error) throw new Error(error ?? 'Błąd zapisu projektu')
 
     await fetch(`${endpointBase}/api/account/designs/update`, {
       method: 'POST',
@@ -149,9 +150,12 @@ export default function ConfiguratorPage() {
       const search = new URLSearchParams(window.location.search)
       if (search.get('design') !== handle) {
         search.set('design', handle)
-        navigate({
-          search: `?${search.toString()}`
-        }, {replace: true})
+        navigate(
+          {
+            search: `?${search.toString()}`,
+          },
+          {replace: true},
+        )
       }
     }
   }
