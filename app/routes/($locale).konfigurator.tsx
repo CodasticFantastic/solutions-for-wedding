@@ -1,6 +1,6 @@
 import {AcrylicTileEditor, AcrylicTileTemplate, generateFullTemplate, EditorElement, DynamicVariant} from '@/components/acrylicTileEditor'
 import {type LoaderFunctionArgs, data as json} from '@shopify/remix-oxygen'
-import {useLoaderData, useParams} from 'react-router'
+import {useLoaderData, useParams, useNavigate} from 'react-router'
 import {useMemo} from 'react'
 
 const DEFAULT_TEMPLATE: AcrylicTileTemplate = generateFullTemplate({
@@ -90,6 +90,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
 export default function ConfiguratorPage() {
   const {locale = ''} = useParams<{locale: string}>()
   const {design, isLoggedIn} = useLoaderData<LoaderPayload>()
+  const navigate = useNavigate();
 
   const memo = useMemo(() => {
     if (!design) {
@@ -143,6 +144,16 @@ export default function ConfiguratorPage() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({id: id ?? designId, handle: handle ?? design?.handle}),
     })
+
+    if (handle) {
+      const search = new URLSearchParams(window.location.search)
+      if (search.get('design') !== handle) {
+        search.set('design', handle)
+        navigate({
+          search: `?${search.toString()}`
+        }, {replace: true})
+      }
+    }
   }
 
   const {template, initialState} = memo
