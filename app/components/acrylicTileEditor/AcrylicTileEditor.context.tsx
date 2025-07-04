@@ -18,6 +18,24 @@ type EditorAction =
   | {type: 'UPDATE_VARIANT'; payload: {id: string; updates: Partial<DynamicVariant>}}
   | {type: 'SET_ACTIVE_VARIANT'; payload: string | undefined}
   | {type: 'REMOVE_VARIANT'; payload: string}
+  | {type: 'CLEANUP_VARIANTS'}
+
+// Helper function to check if there are any dynamic elements
+const hasDynamicElements = (elements: EditorElement[]): boolean => {
+  return elements.some((el) => el.type === 'text' && (el.properties as any).isDynamic === true)
+}
+
+// Helper function to cleanup variants when no dynamic elements exist
+const cleanupVariantsIfNeeded = (state: EditorState): EditorState => {
+  if (!hasDynamicElements(state.elements) && (state.dynamicVariants?.length || 0) > 0) {
+    return {
+      ...state,
+      dynamicVariants: [],
+      activeVariantId: undefined,
+    }
+  }
+  return state
+}
 
 // --- Reducer ---
 function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -46,12 +64,14 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         selectedElementId: action.payload,
       }
 
-    case 'ADD_ELEMENT':
-      return {
+    case 'ADD_ELEMENT': {
+      const newState = {
         ...state,
         elements: [...state.elements, action.payload],
         selectedElementId: action.payload.id,
       }
+      return cleanupVariantsIfNeeded(newState)
+    }
 
     case 'UPDATE_ELEMENT': {
       const positionalKeys = ['x', 'y', 'width', 'height', 'rotation'] as const
@@ -98,7 +118,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         Object.assign(globalUpdates, positionalUpdates)
       }
 
-      return {
+      const newState = {
         ...state,
         elements: state.elements.map((el) => {
           if (el.id !== action.payload.id) return el
@@ -113,14 +133,17 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         }),
         dynamicVariants: newDynamicVariants,
       }
+      return cleanupVariantsIfNeeded(newState)
     }
 
-    case 'REMOVE_ELEMENT':
-      return {
+    case 'REMOVE_ELEMENT': {
+      const newState = {
         ...state,
         elements: state.elements.filter((el) => el.id !== action.payload),
         selectedElementId: state.selectedElementId === action.payload ? null : state.selectedElementId,
       }
+      return cleanupVariantsIfNeeded(newState)
+    }
 
     case 'MOVE_ELEMENT': {
       const {id, direction} = action.payload
@@ -132,14 +155,15 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       } else if (direction === 'DOWN' && index > 0) {
         ;[newElements[index], newElements[index - 1]] = [newElements[index - 1], newElements[index]]
       }
-      return {
+      const newState = {
         ...state,
         elements: newElements,
       }
+      return cleanupVariantsIfNeeded(newState)
     }
 
-    case 'RESET_CANVAS':
-      return {
+    case 'RESET_CANVAS': {
+      const newState = {
         ...state,
         canvas: {
           scale: 1,
@@ -151,6 +175,8 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         elements: [],
         selectedElementId: null,
       }
+      return cleanupVariantsIfNeeded(newState)
+    }
 
     case 'UPDATE_TEMPLATE': {
       const updatedTemplate = {...state.template, ...action.payload}
@@ -166,8 +192,8 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       }
     }
 
-    case 'LOAD_PROJECT':
-      return {
+    case 'LOAD_PROJECT': {
+      const newState = {
         ...state,
         template: action.payload.template,
         elements: action.payload.elements,
@@ -180,6 +206,8 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
           height: action.payload.template.height,
         },
       }
+      return cleanupVariantsIfNeeded(newState)
+    }
 
     case 'ADD_VARIANT':
       return {
@@ -205,6 +233,9 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         dynamicVariants: (state.dynamicVariants || []).filter((v) => v.id !== action.payload),
         activeVariantId: state.activeVariantId === action.payload ? undefined : state.activeVariantId,
       }
+
+    case 'CLEANUP_VARIANTS':
+      return cleanupVariantsIfNeeded(state)
 
     default:
       return state
