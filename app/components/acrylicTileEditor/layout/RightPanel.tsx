@@ -2,12 +2,14 @@ import {SaveToPcButton} from '../components/SaveToPcButton'
 import {SaveToAccountButton} from '../components/SaveToAccountButton'
 import {VariantsPanel} from '../components/VariantsPanel'
 import {EditorElementsList} from '../components/EditorElementsList'
+import {ProjectSizeIndicator} from '../components/ProjectSizeIndicator'
 import {useState} from 'react'
 import {Button} from '@/components/shadCn/ui/button'
 import {LayersIcon, LayoutTemplateIcon} from 'lucide-react'
 
 export const RightPanel = () => {
   const [selectedAction, setSelectedAction] = useState<'ELEMENTS_LIST' | 'VARIANTS'>('ELEMENTS_LIST')
+  
   return (
     <div className="flex h-full flex-col space-y-4 p-4 text-sm">
       <p className="mb-2 text-lg font-bold">Wybierz widok</p>
@@ -33,9 +35,17 @@ export const RightPanel = () => {
       {selectedAction === 'ELEMENTS_LIST' && <EditorElementsList />}
       {selectedAction === 'VARIANTS' && <VariantsPanel />}
 
-      <div className="mt-auto space-y-2">
-        <SaveToPcButton />
-        <SaveToAccountButton />
+      <div className="mt-auto space-y-4">
+        {/* Wskaźnik rozmiaru projektu */}
+        <div className="rounded-lg border bg-card p-3">
+          <ProjectSizeIndicator />
+        </div>
+        
+        {/* Przyciski zapisu */}
+        <div className="space-y-2">
+          <SaveToPcButton />
+          <SaveToAccountButton />
+        </div>
       </div>
     </div>
   )
