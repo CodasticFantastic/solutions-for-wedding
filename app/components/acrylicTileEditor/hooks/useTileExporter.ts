@@ -1,4 +1,5 @@
 import {useCallback} from 'react'
+import {flushSync} from 'react-dom'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 export interface ExportOptions {
@@ -16,47 +17,68 @@ export function useTileExporter() {
   const {stageRef, state, dispatch} = useAcrylicTileEditor()
 
   const exportAsPng = useCallback(
-    ({includeBackground, pixelRatio = 2, autoDownload = true, fileName}: ExportOptions) => {
+    async ({includeBackground, pixelRatio = 2, autoDownload = true, fileName}: ExportOptions) => {
       const stage = stageRef.current
       if (!stage) return null
 
-      // Ukryj warstwę tła jeżeli użytkownik nie chce go eksportować
-      let bgNode: any = null
-      if (!includeBackground) {
-        bgNode = stage.findOne('.template-bg')
-        if (bgNode) {
-          bgNode.hide()
-          stage.draw()
-        }
-      }
-
-      // Eksportuj tylko obszar płytki w oryginalnej rozdzielczości
-      // Używamy oryginalnych wymiarów płytki, ale w kontekście stage'a
-      const dataURL: string = stage.toDataURL({
-        mimeType: 'image/png',
-        pixelRatio,
-        x: state.canvas.x,
-        y: state.canvas.y,
-        width: state.template.width * state.canvas.scale,
-        height: state.template.height * state.canvas.scale
+      // Odznacz wszystkie elementy przed eksportem i wymuś synchroniczny re-render
+      flushSync(() => {
+        dispatch({type: 'SELECT_ELEMENT', payload: null})
       })
 
-      // Przywróć tło
-      if (bgNode) {
-        bgNode.show()
-        stage.draw()
-      }
+      // Poczekaj na zaktualizowanie canvas
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          stage.draw()
 
-      if (autoDownload) {
-        const link = document.createElement('a')
-        link.download = fileName ?? (includeBackground ? 'tile-with-bg.png' : 'tile-transparent.png')
-        link.href = dataURL
-        link.click()
-      }
+          // Ukryj warstwę tła jeżeli użytkownik nie chce go eksportować
+          let bgNode: any = null
+          if (!includeBackground) {
+            bgNode = stage.findOne('.template-bg')
+            if (bgNode) {
+              bgNode.hide()
+              stage.draw()
+            }
+          }
 
-      return dataURL
+          // Eksportuj tylko obszar płytki w oryginalnej rozdzielczości
+          // Używamy oryginalnych wymiarów płytki, ale w kontekście stage'a
+          const dataURL: string = stage.toDataURL({
+            mimeType: 'image/png',
+            pixelRatio,
+            x: state.canvas.x,
+            y: state.canvas.y,
+            width: state.template.width * state.canvas.scale,
+            height: state.template.height * state.canvas.scale,
+          })
+
+          // Przywróć tło
+          if (bgNode) {
+            bgNode.show()
+            stage.draw()
+          }
+
+          if (autoDownload) {
+            const link = document.createElement('a')
+            link.download = fileName ?? (includeBackground ? 'tile-with-bg.png' : 'tile-transparent.png')
+            link.href = dataURL
+            link.click()
+          }
+
+          resolve(dataURL)
+        })
+      })
     },
-    [stageRef, state.template.width, state.template.height, state.canvas.scale, state.canvas.x, state.canvas.y],
+    [
+      stageRef,
+      state.template.width,
+      state.template.height,
+      state.canvas.scale,
+      state.canvas.x,
+      state.canvas.y,
+      state.selectedElementId,
+      dispatch,
+    ],
   )
 
   const waitNextFrame = () => new Promise((res) => requestAnimationFrame(() => res(null)))
@@ -81,7 +103,7 @@ export function useTileExporter() {
         const resolvedName = patternTemplate
           .replace('{label}', variant.label.replace(/[^a-z0-9_-]/gi, '_'))
           .replace('{n}', (i + 1).toString())
-        exportAsPng({includeBackground, pixelRatio, autoDownload, fileName: resolvedName})
+        await exportAsPng({includeBackground, pixelRatio, autoDownload, fileName: resolvedName})
         // small delay to allow file dialog to proceed
         await waitNextFrame()
       }

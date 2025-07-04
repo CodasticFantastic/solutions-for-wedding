@@ -16,13 +16,13 @@ export const SaveToPcButton = () => {
   const {exportAsPng, exportAsPngMulti, exportAsJson} = useTileExporter()
   const {state} = useAcrylicTileEditor()
 
-  const download = (includeBackground: boolean) => {
-    exportAsPng({includeBackground})
+  const download = async (includeBackground: boolean) => {
+    await exportAsPng({includeBackground})
     setOpen(false)
   }
 
-  const downloadAll = (includeBackground: boolean) => {
-    exportAsPngMulti({includeBackground})
+  const downloadAll = async (includeBackground: boolean) => {
+    await exportAsPngMulti({includeBackground})
     setOpen(false)
   }
 
