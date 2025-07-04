@@ -5,14 +5,15 @@ import {useTileExporter} from '../hooks/useTileExporter'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 /**
- * SaveToPcButton – lets the user export the current tile as a PNG file.
- * Provides two options:
+ * SaveToPcButton – lets the user export the current tile as a PNG file or JSON project data.
+ * Provides options:
  *  - "PNG z tłem" – exports with the template background (if set)
  *  - "PNG bez tła" – hides the template background and exports with transparency
+ *  - "JSON projekt" – exports complete project data for Shopify integration
  */
 export const SaveToPcButton = () => {
   const [open, setOpen] = useState(false)
-  const {exportAsPng, exportAsPngMulti} = useTileExporter()
+  const {exportAsPng, exportAsPngMulti, exportAsJson} = useTileExporter()
   const {state} = useAcrylicTileEditor()
 
   const download = (includeBackground: boolean) => {
@@ -22,6 +23,11 @@ export const SaveToPcButton = () => {
 
   const downloadAll = (includeBackground: boolean) => {
     exportAsPngMulti({includeBackground})
+    setOpen(false)
+  }
+
+  const downloadJson = () => {
+    exportAsJson()
     setOpen(false)
   }
 
@@ -40,13 +46,25 @@ export const SaveToPcButton = () => {
           <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => download(false)}>
             PNG bez tła
           </button>
+          <hr />
+          <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={downloadJson}>
+            JSON projekt
+          </button>
           {state.dynamicVariants && state.dynamicVariants.length > 0 && (
             <>
               <hr />
-              <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => downloadAll(true)}>
+              <button
+                type="button"
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100"
+                onClick={() => downloadAll(true)}
+              >
                 PNG wszystkie warianty (z tłem)
               </button>
-              <button type="button" className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100" onClick={() => downloadAll(false)}>
+              <button
+                type="button"
+                className="block w-full px-3 py-2 text-left text-sm hover:bg-gray-100"
+                onClick={() => downloadAll(false)}
+              >
                 PNG wszystkie warianty (bez tła)
               </button>
             </>

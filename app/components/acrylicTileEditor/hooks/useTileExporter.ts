@@ -40,8 +40,7 @@ export function useTileExporter() {
 
       if (autoDownload) {
         const link = document.createElement('a')
-        link.download =
-          fileName ?? (includeBackground ? 'tile-with-bg.png' : 'tile-transparent.png')
+        link.download = fileName ?? (includeBackground ? 'tile-with-bg.png' : 'tile-transparent.png')
         link.href = dataURL
         link.click()
       }
@@ -84,5 +83,33 @@ export function useTileExporter() {
     [state.dynamicVariants, state.activeVariantId, exportAsPng, dispatch],
   )
 
-  return {exportAsPng, exportAsPngMulti}
-} 
+  const exportAsJson = useCallback(() => {
+    // Przygotuj kompletne dane projektu
+    const projectData = {
+      template: state.template,
+      elements: state.elements,
+      dynamicVariants: state.dynamicVariants || [],
+      activeVariantId: state.activeVariantId,
+      exportDate: new Date().toISOString(),
+      version: '1.0.0',
+    }
+
+    // Konwertuj do JSON
+    const jsonString = JSON.stringify(projectData, null, 2)
+    const blob = new Blob([jsonString], {type: 'application/json'})
+    const url = URL.createObjectURL(blob)
+
+    // Utwórz link do pobrania
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${state.template.name || 'projekt'}-${Date.now()}.json`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+
+    // Wyczyść URL
+    URL.revokeObjectURL(url)
+  }, [state])
+
+  return {exportAsPng, exportAsPngMulti, exportAsJson}
+}
