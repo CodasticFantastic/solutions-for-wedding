@@ -30,7 +30,16 @@ export function useTileExporter() {
         }
       }
 
-      const dataURL: string = stage.toDataURL({mimeType: 'image/png', pixelRatio})
+      // Eksportuj tylko obszar płytki w oryginalnej rozdzielczości
+      // Używamy oryginalnych wymiarów płytki, ale w kontekście stage'a
+      const dataURL: string = stage.toDataURL({
+        mimeType: 'image/png',
+        pixelRatio,
+        x: state.canvas.x,
+        y: state.canvas.y,
+        width: state.template.width * state.canvas.scale,
+        height: state.template.height * state.canvas.scale
+      })
 
       // Przywróć tło
       if (bgNode) {
@@ -47,7 +56,7 @@ export function useTileExporter() {
 
       return dataURL
     },
-    [stageRef],
+    [stageRef, state.template.width, state.template.height, state.canvas.scale, state.canvas.x, state.canvas.y],
   )
 
   const waitNextFrame = () => new Promise((res) => requestAnimationFrame(() => res(null)))
