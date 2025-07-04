@@ -11,7 +11,7 @@ import {Popover} from '@/components/shadCn/ui/popover'
 import {PopoverContent, PopoverTrigger} from '@radix-ui/react-popover'
 
 export const TextEditor = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
   const selectedElement = state.elements.find((el) => el.id === state.selectedElementId)
 
   const updateElementTextContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -221,14 +221,14 @@ export const TextEditor = () => {
                 value={selectedElement.properties.text || ''}
                 onChange={updateElementTextContent}
                 className="w-full"
-                disabled={selectedElement.properties.isDynamic}
+                disabled={selectedElement.properties.isDynamic || isReadOnly}
               />
             </div>
 
             {/* Font family */}
             <div className="space-y-1">
               <Label htmlFor="prop-font">Font</Label>
-              <Select value={selectedElement.properties.fontFamily || 'Inter'} onValueChange={updateElementFontFamily}>
+              <Select value={selectedElement.properties.fontFamily || 'Inter'} onValueChange={updateElementFontFamily} disabled={isReadOnly}>
                 <SelectTrigger id="prop-font" className="w-full">
                   <SelectValue placeholder="Wybierz font" />
                 </SelectTrigger>
@@ -253,6 +253,7 @@ export const TextEditor = () => {
                 value={(selectedElement.properties.fontSize || 24).toString()}
                 onChange={updateElementFontSize}
                 className="w-full"
+                disabled={isReadOnly}
               />
             </div>
 
@@ -265,6 +266,7 @@ export const TextEditor = () => {
                 value={selectedElement.properties.fill || '#000000'}
                 onChange={updateElementColor}
                 className="h-8 w-full p-0"
+                disabled={isReadOnly}
               />
             </div>
 
@@ -276,6 +278,7 @@ export const TextEditor = () => {
                 size="sm"
                 variant={selectedElement.properties.fontStyle?.includes('bold') ? 'default' : 'outline'}
                 onClick={updateElementFontWeight}
+                disabled={isReadOnly}
               >
                 <BoldIcon className="h-4 w-4" />
               </Button>
@@ -285,6 +288,7 @@ export const TextEditor = () => {
                 size="sm"
                 variant={selectedElement.properties.fontStyle?.includes('italic') ? 'default' : 'outline'}
                 onClick={updateElementFontItalic}
+                disabled={isReadOnly}
               >
                 <ItalicIcon className="h-4 w-4" />
               </Button>
@@ -294,6 +298,7 @@ export const TextEditor = () => {
                 size="sm"
                 variant={selectedElement.properties.align === 'left' || !selectedElement.properties.align ? 'default' : 'outline'}
                 onClick={() => updateElementAlign('left')}
+                disabled={isReadOnly}
               >
                 <AlignLeftIcon className="h-4 w-4" />
               </Button>
@@ -303,6 +308,7 @@ export const TextEditor = () => {
                 size="sm"
                 variant={selectedElement.properties.align === 'center' ? 'default' : 'outline'}
                 onClick={() => updateElementAlign('center')}
+                disabled={isReadOnly}
               >
                 <AlignCenterIcon className="h-4 w-4" />
               </Button>
@@ -312,6 +318,7 @@ export const TextEditor = () => {
                 size="sm"
                 variant={selectedElement.properties.align === 'right' ? 'default' : 'outline'}
                 onClick={() => updateElementAlign('right')}
+                disabled={isReadOnly}
               >
                 <AlignRightIcon className="h-4 w-4" />
               </Button>

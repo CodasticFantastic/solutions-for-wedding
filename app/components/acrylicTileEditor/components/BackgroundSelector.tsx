@@ -14,7 +14,7 @@ import {DEFAULT_TILE_BACKGROUNDS} from '../acrylicTileEditor.config'
  * BackgroundSelector – lets the user pick one of the predefined tile backgrounds.
  */
 export const BackgroundSelector = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
 
   // Decide which option is currently active based on template backgroundImage
   const [selectedId, setSelectedId] = useState<string>(() => {
@@ -42,7 +42,7 @@ export const BackgroundSelector = () => {
       <Label htmlFor="tile-bg" className="text-base font-semibold">
         Tło płytki
       </Label>
-      <Select value={selectedId} onValueChange={handleSelect}>
+      <Select value={selectedId} onValueChange={handleSelect} disabled={isReadOnly}>
         <SelectTrigger id="tile-bg" className="w-full">
           <SelectValue placeholder="Wybierz tło" />
         </SelectTrigger>

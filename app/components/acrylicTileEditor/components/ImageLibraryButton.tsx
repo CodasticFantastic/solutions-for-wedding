@@ -26,7 +26,7 @@ const encodeBase64 = (str: string) => {
 const svgToDataUrl = (svg: string) => `data:image/svg+xml;base64,${encodeBase64(svg)}`
 
 export const ImageLibraryButton = () => {
-  const {dispatch} = useAcrylicTileEditor()
+  const {dispatch, isReadOnly} = useAcrylicTileEditor()
   const [color, setColor] = useState('#000000')
 
   const handleAddSvg = (rawSvg: string) => {
@@ -52,7 +52,7 @@ export const ImageLibraryButton = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full" disabled={isReadOnly}>
           <Badge variant="outline">
             <ImageIcon />
           </Badge>

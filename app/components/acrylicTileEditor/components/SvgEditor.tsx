@@ -3,7 +3,7 @@ import {Input} from '@/components/shadCn/ui/input'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 export const SvgEditor = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
   const selected = state.elements.find((el) => el.id === state.selectedElementId)
 
   if (!selected || selected.type !== 'svg') {
@@ -35,6 +35,7 @@ export const SvgEditor = () => {
             })
           }
           className="h-8 w-full p-0"
+          disabled={isReadOnly}
         />
       </div>
     </div>

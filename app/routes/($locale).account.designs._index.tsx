@@ -1,6 +1,7 @@
 import {type LoaderFunctionArgs} from '@shopify/remix-oxygen'
 import {Link, useLoaderData, useFetcher, useRevalidator, useParams} from 'react-router'
 import {Button} from '@/components/shadCn/ui/button'
+import {Badge} from '@/components/shadCn/ui/badge'
 import {METAOBJECTS_BY_IDS_QUERY} from '@/graphql/storefront/queries/metaobjectsByIds.query'
 import {
   AlertDialog,
@@ -13,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/shadCn/ui/alert-dialog'
-import {EditIcon, Trash2} from 'lucide-react'
+import {EditIcon, Trash2, EyeIcon} from 'lucide-react'
 import {useState} from 'react'
 
 export async function loader({context}: LoaderFunctionArgs) {
@@ -49,11 +50,26 @@ export async function loader({context}: LoaderFunctionArgs) {
   })
 
   const nodes = res?.nodes ?? []
-  const designs = nodes.map((n: any) => ({
-    id: n.id,
-    handle: n.handle,
-    title: n.title?.value ?? 'Bez nazwy',
-  }))
+  const designs = nodes.map((n: any) => {
+    // Parse the design_json to check if it's editable
+    let isEditable = true
+    try {
+      if (n.design_json?.value) {
+        const designData = JSON.parse(n.design_json.value) as {template?: {isEditable?: boolean}}
+        isEditable = designData.template?.isEditable !== false
+      }
+    } catch (e) {
+      // If parsing fails, assume it's editable
+      isEditable = true
+    }
+
+    return {
+      id: n.id,
+      handle: n.handle,
+      title: n.title?.value ?? 'Bez nazwy',
+      isEditable,
+    }
+  })
 
   return {designs}
 }
@@ -99,16 +115,33 @@ export default function DesignsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {designs.map((d: any) => (
           <div key={d.id} className="rounded border p-4 shadow-sm">
-            <p className="mb-2 truncate font-medium" title={d.title}>
-              {d.title}
-            </p>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="truncate font-medium" title={d.title}>
+                {d.title}
+              </p>
+              {!d.isEditable && (
+                <Badge variant="outline" className="ml-2">
+                  <EyeIcon className="mr-1 h-3 w-3" />
+                  Nieedytowalny
+                </Badge>
+              )}
+            </div>
             <div className="flex gap-2">
-              <Button asChild size="sm" className="flex-1">
-                <Link to={`/konfigurator?design=${d.handle}`}>
-                  <EditIcon className="mr-2 h-4 w-4" />
-                  Edytuj
-                </Link>
-              </Button>
+              {d.isEditable ? (
+                <Button asChild size="sm" className="flex-1">
+                  <Link to={`/konfigurator?design=${d.handle}`}>
+                    <EditIcon className="mr-2 h-4 w-4" />
+                    Edytuj
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild size="sm" variant="outline" className="flex-1">
+                  <Link to={`/konfigurator?design=${d.handle}`}>
+                    <EyeIcon className="mr-2 h-4 w-4" />
+                    Podgląd
+                  </Link>
+                </Button>
+              )}
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>

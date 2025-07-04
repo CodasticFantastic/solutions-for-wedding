@@ -25,6 +25,11 @@ const hasDynamicElements = (elements: EditorElement[]): boolean => {
   return elements.some((el) => el.type === 'text' && (el.properties as any).isDynamic === true)
 }
 
+// Helper function to check if editor is in read-only mode
+const isReadOnly = (template: AcrylicTileTemplate): boolean => {
+  return template.isEditable === false
+}
+
 // Helper function to cleanup variants when no dynamic elements exist
 const cleanupVariantsIfNeeded = (state: EditorState): EditorState => {
   if (!hasDynamicElements(state.elements) && (state.dynamicVariants?.length || 0) > 0) {
@@ -249,6 +254,7 @@ interface AcrylicTileEditorContextType {
   onSave?: (data: any) => void
   stageRef: React.RefObject<any>
   isLoggedIn: boolean
+  isReadOnly: boolean
 }
 
 const AcrylicTileEditorContext = createContext<AcrylicTileEditorContextType | undefined>(undefined)
@@ -291,7 +297,7 @@ export function AcrylicTileEditorProvider({
   const stageRef = useRef<any>(null)
 
   return (
-    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef, isLoggedIn}}>
+    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef, isLoggedIn, isReadOnly: isReadOnly(state.template)}}>
       {children}
     </AcrylicTileEditorContext.Provider>
   )

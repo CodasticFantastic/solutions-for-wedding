@@ -3,7 +3,7 @@ import {Label} from '@/components/shadCn/ui/label'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 export const NameInput = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     dispatch({type: 'UPDATE_TEMPLATE', payload: {name: e.target.value}})
@@ -20,6 +20,7 @@ export const NameInput = () => {
         value={state.template.name}
         onChange={handleNameChange}
         className="w-full"
+        disabled={isReadOnly}
       />
     </>
   )

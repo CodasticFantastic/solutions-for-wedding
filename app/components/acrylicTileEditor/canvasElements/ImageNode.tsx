@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import {Image as KonvaImage, Transformer} from 'react-konva'
 import {EditorImageElement} from '../acrylicTileEditor.types'
+import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 interface NodeProps {
   element: EditorImageElement
@@ -13,6 +14,7 @@ export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) 
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
   const [imgObj, setImgObj] = useState<HTMLImageElement | null>(null)
+  const {isReadOnly} = useAcrylicTileEditor()
 
   useEffect(() => {
     if (element.properties.src) {
@@ -35,10 +37,10 @@ export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) 
         ref={shapeRef}
         image={imgObj || undefined}
         {...element}
-        onClick={onSelect}
-        draggable
-        onDragEnd={(e) => onChange({x: e.target.x(), y: e.target.y()})}
-        onTransformEnd={() => {
+        onClick={isReadOnly ? undefined : onSelect}
+        draggable={!isReadOnly}
+        onDragEnd={isReadOnly ? undefined : (e) => onChange({x: e.target.x(), y: e.target.y()})}
+        onTransformEnd={isReadOnly ? undefined : () => {
           const node = shapeRef.current
           const scaleX = node.scaleX()
           const scaleY = node.scaleY()

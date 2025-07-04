@@ -23,6 +23,7 @@ export interface AcrylicTileTemplate {
   height: number;
   backgroundImage: string | null;
   orientation: 'horizontal' | 'vertical';
+  isEditable?: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -125,6 +126,7 @@ type RawTemplate = {
   backgroundImage?: string
   dpi: number
   orientation: 'horizontal' | 'vertical'
+  isEditable?: boolean
 }
 
 export function generateFullTemplate({
@@ -135,6 +137,7 @@ export function generateFullTemplate({
   backgroundImage = 'transparent',
   dpi = DEFAULT_DPI,
   orientation = 'horizontal',
+  isEditable = true,
 }: RawTemplate): AcrylicTileTemplate {
   const widthPx = orientation === 'vertical' ? cmToPixels(realWidth, dpi) : cmToPixels(realHeight, dpi)
   const heightPx = orientation === 'vertical' ? cmToPixels(realHeight, dpi) : cmToPixels(realWidth, dpi)
@@ -146,6 +149,7 @@ export function generateFullTemplate({
     height: heightPx,
     backgroundImage,
     orientation,
+    isEditable,
   }
 }
 

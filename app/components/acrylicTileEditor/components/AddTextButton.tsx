@@ -4,7 +4,7 @@ import {Badge} from '@/components/shadCn/ui/badge'
 import {CaseSensitiveIcon} from 'lucide-react'
 
 export const AddTextButton = () => {
-  const {dispatch} = useAcrylicTileEditor()
+  const {dispatch, isReadOnly} = useAcrylicTileEditor()
 
   const handleAddText = () => {
     dispatch({
@@ -30,7 +30,7 @@ export const AddTextButton = () => {
   }
 
   return (
-    <Button variant="outline" onClick={handleAddText} className="w-full">
+    <Button variant="outline" onClick={handleAddText} className="w-full" disabled={isReadOnly}>
       <Badge variant="outline">
         <CaseSensitiveIcon />
       </Badge>

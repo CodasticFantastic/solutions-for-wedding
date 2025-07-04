@@ -7,7 +7,7 @@ import {cn} from '@/lib/shadCn/utils'
 import {Alert, AlertDescription, AlertTitle} from '@/components/shadCn/ui/alert'
 
 export const VariantsPanel = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
 
   const [newLabel, setNewLabel] = useState('')
 
@@ -106,8 +106,8 @@ export const VariantsPanel = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => dispatch({type: 'REMOVE_VARIANT', payload: v.id})}
-                    className="text-destructive opacity-70 transition-opacity hover:opacity-100"
+                    onClick={() => !isReadOnly && dispatch({type: 'REMOVE_VARIANT', payload: v.id})}
+                    className={cn("text-destructive opacity-70 transition-opacity hover:opacity-100", isReadOnly && "cursor-not-allowed opacity-30")}
                   >
                     <Trash2 size={16} className="cursor-pointer" />
                   </button>
@@ -118,8 +118,8 @@ export const VariantsPanel = () => {
 
           {/* Add variant */}
           <div className="flex gap-2">
-            <Input placeholder="Nazwa nowego wariantu" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} />
-            <Button type="button" size="icon" onClick={addVariant}>
+            <Input placeholder="Nazwa nowego wariantu" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} disabled={isReadOnly} />
+            <Button type="button" size="icon" onClick={addVariant} disabled={isReadOnly}>
               <Plus className="size-4" />
             </Button>
           </div>
@@ -141,6 +141,7 @@ export const VariantsPanel = () => {
                       payload: {id: activeVariant.id, updates: {label: e.target.value}},
                     })
                   }
+                  disabled={isReadOnly}
                 />
               </div>
 
@@ -154,6 +155,7 @@ export const VariantsPanel = () => {
                     id={`var-field-${key}`}
                     value={activeVariant.values[key] || ''}
                     onChange={(e) => updateFieldValue(key, e.target.value)}
+                    disabled={isReadOnly}
                   />
                 </div>
               ))}

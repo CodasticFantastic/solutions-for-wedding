@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react'
 import {Image as KonvaImage, Transformer} from 'react-konva'
 import {EditorSvgElement} from '../acrylicTileEditor.types'
+import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 interface NodeProps {
   element: EditorSvgElement
@@ -25,6 +26,7 @@ export function SvgNode({element, isSelected, onSelect, onChange}: NodeProps) {
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
   const [imgObj, setImgObj] = useState<HTMLImageElement | null>(null)
+  const {isReadOnly} = useAcrylicTileEditor()
 
   const {raw, fill} = element.properties
 
@@ -55,10 +57,10 @@ export function SvgNode({element, isSelected, onSelect, onChange}: NodeProps) {
         {...element}
         width={width}
         height={height}
-        onClick={onSelect}
-        draggable
-        onDragEnd={(e) => onChange({x: e.target.x(), y: e.target.y()})}
-        onTransformEnd={() => {
+        onClick={isReadOnly ? undefined : onSelect}
+        draggable={!isReadOnly}
+        onDragEnd={isReadOnly ? undefined : (e) => onChange({x: e.target.x(), y: e.target.y()})}
+        onTransformEnd={isReadOnly ? undefined : () => {
           const node = shapeRef.current
           const scaleX = node.scaleX()
           const scaleY = node.scaleY()

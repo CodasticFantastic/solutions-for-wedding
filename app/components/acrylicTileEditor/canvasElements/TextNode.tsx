@@ -2,6 +2,7 @@ import Konva from 'konva'
 import {useEffect, useRef} from 'react'
 import {Text, Transformer} from 'react-konva'
 import {EditorTextElement} from '../acrylicTileEditor.types'
+import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 
 interface NodeProps {
   element: EditorTextElement
@@ -13,6 +14,7 @@ interface NodeProps {
 export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
+  const {isReadOnly} = useAcrylicTileEditor()
 
   // Calculate initial dimensions if not set
   const getInitialDimensions = () => {
@@ -142,11 +144,11 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
         fontStyle={element.properties.fontStyle || 'normal'}
         align={element.properties.align || 'left'}
         fill={element.properties.fill || '#000'}
-        onClick={onSelect}
-        draggable
-        onDragEnd={onDragEnd}
-        onTransform={onTransform}
-        onTransformEnd={onTransformEnd}
+        onClick={isReadOnly ? undefined : onSelect}
+        draggable={!isReadOnly}
+        onDragEnd={isReadOnly ? undefined : onDragEnd}
+        onTransform={isReadOnly ? undefined : onTransform}
+        onTransformEnd={isReadOnly ? undefined : onTransformEnd}
       />
       {isSelected && (
         <Transformer

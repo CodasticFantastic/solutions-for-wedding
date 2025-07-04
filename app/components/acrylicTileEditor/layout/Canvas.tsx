@@ -20,7 +20,7 @@ export const Canvas = () => {
     setIsClient(true)
   }, [])
 
-  const {state, dispatch, stageRef} = useAcrylicTileEditor()
+  const {state, dispatch, stageRef, isReadOnly} = useAcrylicTileEditor()
   const containerRef = useRef<HTMLDivElement>(null)
   const containerSize = useContainerSize(containerRef)
 
@@ -46,8 +46,16 @@ export const Canvas = () => {
     // After dimensions change, fitting hook will adjust on next render
   }
 
-  const handleElementSelect = (id: string) => dispatch({type: 'SELECT_ELEMENT', payload: id})
-  const handleElementChange = (id: string, updates: any) => dispatch({type: 'UPDATE_ELEMENT', payload: {id, updates}})
+  const handleElementSelect = (id: string) => {
+    if (!isReadOnly) {
+      dispatch({type: 'SELECT_ELEMENT', payload: id})
+    }
+  }
+  const handleElementChange = (id: string, updates: any) => {
+    if (!isReadOnly) {
+      dispatch({type: 'UPDATE_ELEMENT', payload: {id, updates}})
+    }
+  }
 
   if (!isClient) {
     return <div ref={containerRef} className="relative h-full w-full bg-gray-100" />
@@ -79,7 +87,9 @@ export const Canvas = () => {
         onClick={(e: any) => {
           // Only deselect if clicking directly on the stage (not on any shape)
           if (e.target === e.target.getStage()) {
-            dispatch({type: 'SELECT_ELEMENT', payload: null})
+            if (!isReadOnly) {
+              dispatch({type: 'SELECT_ELEMENT', payload: null})
+            }
           }
         }}
       >
@@ -94,7 +104,7 @@ export const Canvas = () => {
             stroke="#e5e7eb"
             strokeWidth={5}
             cornerRadius={CORNER_RADIUS}
-            onClick={() => dispatch({type: 'SELECT_ELEMENT', payload: null})}
+            onClick={isReadOnly ? undefined : () => dispatch({type: 'SELECT_ELEMENT', payload: null})}
           />
 
           {/* Optional background image */}

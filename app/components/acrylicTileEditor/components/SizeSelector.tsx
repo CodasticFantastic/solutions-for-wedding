@@ -12,7 +12,7 @@ import {useCallback, useState} from 'react'
 import {cmToPixels} from '../acrylicTileEditor.types'
 
 export const SizeSelector = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
 
   // Selector state – try to match current template size with one of the presets
   const [selectedSizeId, setSelectedSizeId] = useState<string>(() => {
@@ -46,7 +46,7 @@ export const SizeSelector = () => {
       <Label htmlFor="tile-size" className="text-base font-semibold">
         Rozmiar płytki
       </Label>
-      <Select value={selectedSizeId} onValueChange={handleSizeSelect}>
+      <Select value={selectedSizeId} onValueChange={handleSizeSelect} disabled={isReadOnly}>
         <SelectTrigger id="tile-size" className="w-full">
           <SelectValue placeholder="Wybierz rozmiar" />
         </SelectTrigger>

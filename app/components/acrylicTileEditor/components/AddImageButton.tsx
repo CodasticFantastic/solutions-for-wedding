@@ -80,7 +80,7 @@ const compressImageWithPica = async (file: File): Promise<Blob> => {
 }
 
 export const AddImageButton = () => {
-  const {dispatch} = useAcrylicTileEditor()
+  const {dispatch, isReadOnly} = useAcrylicTileEditor()
 
   const handleAddImage = async () => {
     const input = document.createElement('input')
@@ -140,7 +140,7 @@ export const AddImageButton = () => {
   }
 
   return (
-    <Button variant="outline" onClick={handleAddImage} className="w-full">
+    <Button variant="outline" onClick={handleAddImage} className="w-full" disabled={isReadOnly}>
       <Badge variant="outline">
         <ImageIcon />
       </Badge>

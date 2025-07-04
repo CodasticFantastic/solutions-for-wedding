@@ -8,7 +8,7 @@ import {cn} from '@/lib/shadCn/utils'
 // List of elements
 // ---------------------------------------------------------------------------
 export const EditorElementsList = () => {
-  const {state, dispatch} = useAcrylicTileEditor()
+  const {state, dispatch, isReadOnly} = useAcrylicTileEditor()
 
   const selectedElementId = state.selectedElementId
   const elements = [...state.elements].slice().reverse() // highest first
@@ -60,6 +60,7 @@ interface EditorElementListItemProps {
 }
 
 const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect, onMove, onRemove}: EditorElementListItemProps) => {
+  const {isReadOnly} = useAcrylicTileEditor()
   const label = element.type === 'text' ? element.properties.text || 'Tekst' : element.properties.alt || 'Obraz'
 
   return (
@@ -75,14 +76,14 @@ const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect
           <span
             role="button"
             tabIndex={0}
-            onClick={(e) => !topMost && onMove('UP', e)}
+            onClick={(e) => !topMost && !isReadOnly && onMove('UP', e)}
             onKeyDown={(e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && !topMost) {
+              if ((e.key === 'Enter' || e.key === ' ') && !topMost && !isReadOnly) {
                 e.preventDefault()
                 onMove('UP', e as any)
               }
             }}
-            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', topMost && 'cursor-not-allowed opacity-30')}
+            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', (topMost || isReadOnly) && 'cursor-not-allowed opacity-30')}
           >
             <ChevronUp className="pointer-events-none h-4 w-4" />
           </span>
@@ -91,14 +92,14 @@ const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect
           <span
             role="button"
             tabIndex={0}
-            onClick={(e) => !bottomMost && onMove('DOWN', e)}
+            onClick={(e) => !bottomMost && !isReadOnly && onMove('DOWN', e)}
             onKeyDown={(e) => {
-              if ((e.key === 'Enter' || e.key === ' ') && !bottomMost) {
+              if ((e.key === 'Enter' || e.key === ' ') && !bottomMost && !isReadOnly) {
                 e.preventDefault()
                 onMove('DOWN', e as any)
               }
             }}
-            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', bottomMost && 'cursor-not-allowed opacity-30')}
+            className={cn('pointer-events-auto grid h-5 w-5 place-items-center', (bottomMost || isReadOnly) && 'cursor-not-allowed opacity-30')}
           >
             <ChevronDown className="pointer-events-none h-4 w-4" />
           </span>
@@ -107,14 +108,14 @@ const EditorElementListItem = ({element, selected, topMost, bottomMost, onSelect
           <span
             role="button"
             tabIndex={0}
-            onClick={onRemove}
+            onClick={isReadOnly ? undefined : onRemove}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if ((e.key === 'Enter' || e.key === ' ') && !isReadOnly) {
                 e.preventDefault()
                 onRemove(e as any)
               }
             }}
-            className="text-destructive pointer-events-auto grid h-5 w-5 place-items-center"
+            className={cn("text-destructive pointer-events-auto grid h-5 w-5 place-items-center", isReadOnly && "cursor-not-allowed opacity-30")}
           >
             <Trash2 className="pointer-events-none h-4 w-4" />
           </span>
