@@ -33,19 +33,6 @@ export const Canvas = () => {
   // One-time initial fitting handled via custom hook
   useInitialFit({containerSize, template: state.template, dispatch})
 
-  const rotateTile = (dir: 'left' | 'right') => {
-    // swap width/height
-    dispatch({
-      type: 'UPDATE_TEMPLATE',
-      payload: {
-        width: state.template.height,
-        height: state.template.width,
-        orientation: state.template.orientation === 'vertical' ? 'horizontal' : 'vertical',
-      } as any,
-    })
-    // After dimensions change, fitting hook will adjust on next render
-  }
-
   const handleElementSelect = (id: string) => {
     if (!isReadOnly) {
       dispatch({type: 'SELECT_ELEMENT', payload: id})
@@ -63,16 +50,6 @@ export const Canvas = () => {
 
   return (
     <div ref={containerRef} className="relative h-full w-full overflow-hidden bg-gray-100">
-      {/* rotate buttons */}
-      <div className="absolute top-4 right-4 z-10 flex gap-2">
-        <button aria-label="Obróć w lewo" onClick={() => rotateTile('left')} className="rounded bg-white p-1 shadow">
-          <RotateCcw className="size-5" />
-        </button>
-        <button aria-label="Obróć w prawo" onClick={() => rotateTile('right')} className="rounded bg-white p-1 shadow">
-          <RotateCw className="size-5" />
-        </button>
-      </div>
-
       <div className="absolute bottom-4 left-4 z-10 rounded bg-white px-3 py-1 text-xs shadow">{Math.round(state.canvas.scale * 100)}%</div>
 
       <Stage
@@ -130,9 +107,7 @@ export const Canvas = () => {
 
             // Apply dynamic text substitution if needed
             if (el.type === 'text' && el.properties.isDynamic && el.properties.fieldKey) {
-              const activeVar: DynamicVariant | undefined = (state.dynamicVariants || []).find(
-                (v) => v.id === state.activeVariantId,
-              )
+              const activeVar: DynamicVariant | undefined = (state.dynamicVariants || []).find((v) => v.id === state.activeVariantId)
               if (activeVar) {
                 const newText = activeVar.values[el.properties.fieldKey] ?? el.properties.text
                 el = {

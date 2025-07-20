@@ -1,6 +1,9 @@
 export { AcrylicTileEditor } from './AcrylicTileEditor';
 export { useAcrylicTileEditor } from './AcrylicTileEditor.context';
 
+// Components
+export { OrientationSelector } from './components/OrientationSelector';
+
 export type {
   AcrylicTileTemplate,
   CanvasState,

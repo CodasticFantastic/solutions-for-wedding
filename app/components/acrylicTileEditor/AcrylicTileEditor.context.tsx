@@ -1,4 +1,4 @@
-import {createContext, useContext, useReducer, ReactNode, useRef} from 'react'
+import {createContext, useContext, useReducer, ReactNode, useRef, useState, useEffect} from 'react'
 import {AcrylicTileTemplate, EditorState, EditorElement, DynamicVariant} from './acrylicTileEditor.types'
 
 // --- Akcje ---
@@ -12,7 +12,10 @@ type EditorAction =
   | {type: 'REMOVE_ELEMENT'; payload: string}
   | {type: 'RESET_CANVAS'}
   | {type: 'UPDATE_TEMPLATE'; payload: Partial<AcrylicTileTemplate>}
-  | {type: 'LOAD_PROJECT'; payload: {template: AcrylicTileTemplate; elements: EditorElement[]; dynamicVariants?: DynamicVariant[]; activeVariantId?: string}}
+  | {
+      type: 'LOAD_PROJECT'
+      payload: {template: AcrylicTileTemplate; elements: EditorElement[]; dynamicVariants?: DynamicVariant[]; activeVariantId?: string}
+    }
   | {type: 'MOVE_ELEMENT'; payload: {id: string; direction: 'UP' | 'DOWN'}}
   | {type: 'ADD_VARIANT'; payload: DynamicVariant}
   | {type: 'UPDATE_VARIANT'; payload: {id: string; updates: Partial<DynamicVariant>}}
@@ -255,9 +258,14 @@ interface AcrylicTileEditorContextType {
   stageRef: React.RefObject<any>
   isLoggedIn: boolean
   isReadOnly: boolean
+  selectedStep: EditorStep
+  setSelectedStep: (step: EditorStep) => void
+  projectHasName: boolean
 }
 
 const AcrylicTileEditorContext = createContext<AcrylicTileEditorContextType | undefined>(undefined)
+
+type EditorStep = 'I' | 'II' | 'III'
 
 // --- Provider ---
 interface AcrylicTileEditorProviderProps {
@@ -275,6 +283,8 @@ export function AcrylicTileEditorProvider({
   initialState: customInitialState,
   isLoggedIn,
 }: AcrylicTileEditorProviderProps) {
+  const [selectedStep, setSelectedStep] = useState<EditorStep>('I')
+  const [projectHasName, setProjectHasName] = useState(false)
   const initialState: EditorState = {
     canvas: {
       scale: 1,
@@ -293,11 +303,27 @@ export function AcrylicTileEditorProvider({
 
   const [state, dispatch] = useReducer(editorReducer, initialState)
 
+  useEffect(() => {
+    setProjectHasName(state.template.name !== '')
+  }, [state.template.name])
+
   // This ref will hold Konva Stage instance
   const stageRef = useRef<any>(null)
 
   return (
-    <AcrylicTileEditorContext.Provider value={{state, dispatch, onSave, stageRef, isLoggedIn, isReadOnly: isReadOnly(state.template)}}>
+    <AcrylicTileEditorContext.Provider
+      value={{
+        state,
+        dispatch,
+        onSave,
+        stageRef,
+        isLoggedIn,
+        isReadOnly: isReadOnly(state.template),
+        selectedStep,
+        setSelectedStep,
+        projectHasName,
+      }}
+    >
       {children}
     </AcrylicTileEditorContext.Provider>
   )

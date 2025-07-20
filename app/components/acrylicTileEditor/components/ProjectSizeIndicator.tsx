@@ -55,7 +55,7 @@ export const ProjectSizeIndicator = () => {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="bg-card space-y-2 rounded-lg border p-3">
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">Rozmiar projektu</span>

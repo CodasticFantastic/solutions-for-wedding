@@ -21,7 +21,7 @@ export function AcrylicTileEditor({template, onSave, initialState, isLoggedIn}: 
         <div className="flex-1">
           <Canvas />
         </div>
-        <div className="bg-background w-80 border-l">
+        <div className="bg-background w-96 border-l">
           <RightPanel />
         </div>
       </div>

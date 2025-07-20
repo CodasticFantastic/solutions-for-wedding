@@ -140,7 +140,7 @@ export const AddImageButton = () => {
   }
 
   return (
-    <Button variant="outline" onClick={handleAddImage} className="w-full" disabled={isReadOnly}>
+    <Button variant="outline" onClick={handleAddImage} className="h-auto flex-col" disabled={isReadOnly}>
       <Badge variant="outline">
         <ImageIcon />
       </Badge>

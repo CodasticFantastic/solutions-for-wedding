@@ -21,6 +21,7 @@ export const NameInput = () => {
         onChange={handleNameChange}
         className="w-full"
         disabled={isReadOnly}
+        placeholder="Uzupełnij nazwę projektu"
       />
     </>
   )

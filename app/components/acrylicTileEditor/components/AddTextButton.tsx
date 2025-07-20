@@ -30,7 +30,7 @@ export const AddTextButton = () => {
   }
 
   return (
-    <Button variant="outline" onClick={handleAddText} className="w-full" disabled={isReadOnly}>
+    <Button variant="outline" onClick={handleAddText} className="flex-col h-auto" disabled={isReadOnly}>
       <Badge variant="outline">
         <CaseSensitiveIcon />
       </Badge>

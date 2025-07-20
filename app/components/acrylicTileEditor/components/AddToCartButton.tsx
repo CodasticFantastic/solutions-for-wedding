@@ -1,11 +1,21 @@
 import {useState} from 'react'
 import {Button} from '@/components/shadCn/ui/button'
-import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/shadCn/ui/alert-dialog'
-import {ShoppingCart} from 'lucide-react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/shadCn/ui/alert-dialog'
+import {SaveIcon, ShoppingCart, ShoppingCartIcon} from 'lucide-react'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {DEFAULT_TILE_BACKGROUNDS} from '../acrylicTileEditor.config'
 import {useParams, Link} from 'react-router'
 import {pixelsToCm} from '../acrylicTileEditor.types'
+import {Alert, AlertDescription, AlertTitle} from '@/components/shadCn/ui/alert'
 
 export const AddToCartButton = () => {
   const [open, setOpen] = useState(false)
@@ -46,7 +56,7 @@ export const AddToCartButton = () => {
       // Update the local template to be non-editable
       dispatch({
         type: 'UPDATE_TEMPLATE',
-        payload: { isEditable: false }
+        payload: {isEditable: false},
       })
 
       setOpen(false)
@@ -61,7 +71,7 @@ export const AddToCartButton = () => {
 
   const getBackgroundName = (backgroundId: string | null) => {
     if (!backgroundId) return 'Przezroczyste'
-    const background = DEFAULT_TILE_BACKGROUNDS.find(bg => bg.id === backgroundId)
+    const background = DEFAULT_TILE_BACKGROUNDS.find((bg) => bg.id === backgroundId)
     return background?.label || 'Nieznane tło'
   }
 
@@ -88,9 +98,7 @@ export const AddToCartButton = () => {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Dodaj projekt do koszyka</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Sprawdź informacje o projekcie przed dodaniem do koszyka.
-                </AlertDialogDescription>
+                <AlertDialogDescription>Sprawdź informacje o projekcie przed dodaniem do koszyka.</AlertDialogDescription>
               </AlertDialogHeader>
 
               <div className="space-y-4">
@@ -119,8 +127,8 @@ export const AddToCartButton = () => {
                 {/* Warning */}
                 <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-3">
                   <p className="text-sm text-yellow-800">
-                    <strong>Uwaga:</strong> Po dodaniu produktu do koszyka nie będzie możliwa już jego edycja. 
-                    Projekt zostanie zapisany w Twoim profilu z flagą blokującą edytowanie.
+                    <strong>Uwaga:</strong> Po dodaniu produktu do koszyka nie będzie możliwa już jego edycja. Projekt zostanie zapisany w
+                    Twoim profilu z flagą blokującą edytowanie.
                   </p>
                 </div>
               </div>
@@ -135,17 +143,20 @@ export const AddToCartButton = () => {
           </AlertDialog>
         </>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-          <p className="text-sm text-gray-600 mb-2">
-            Musisz być zalogowany, aby dodać projekt do koszyka.
-          </p>
-          <Link to="/login">
-            <Button className="w-full" size="sm">
-              Zaloguj się
-            </Button>
-          </Link>
-        </div>
+        <Alert variant="default">
+          <AlertTitle className="flex items-center gap-2 text-lg">
+            <ShoppingCartIcon size={18} /> Kup projekt
+          </AlertTitle>
+          <AlertDescription>
+            Musisz być zalogowany, aby dokonać zakupu projektu lub zapisać go w swoim koncie.
+            <Link to="/account" className="mt-2 w-full">
+              <Button className="w-full" size="sm">
+                Zaloguj się
+              </Button>
+            </Link>
+          </AlertDescription>
+        </Alert>
       )}
     </>
   )
-} 
+}

@@ -3,7 +3,7 @@ import {Button} from '@/components/shadCn/ui/button'
 import {Badge} from '@/components/shadCn/ui/badge'
 import {Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose} from '@/components/shadCn/ui/sheet'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
-import {ImageIcon} from 'lucide-react'
+import {LayoutDashboardIcon} from 'lucide-react'
 
 // Dynamically import all SVG files in the editor library as raw strings
 // Note: use absolute-from-root pattern starting with '/'. '?raw' query ensures raw content.
@@ -51,12 +51,12 @@ export const ImageLibraryButton = () => {
 
   return (
     <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="outline" className="w-full" disabled={isReadOnly}>
+      <SheetTrigger>
+        <Button variant="outline" className="h-auto flex-col" disabled={isReadOnly}>
           <Badge variant="outline">
-            <ImageIcon />
+            <LayoutDashboardIcon />
           </Badge>
-          Baza obrazków
+          Baza plików
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="flex flex-col">

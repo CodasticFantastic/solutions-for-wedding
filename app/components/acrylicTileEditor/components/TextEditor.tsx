@@ -225,51 +225,56 @@ export const TextEditor = () => {
               />
             </div>
 
-            {/* Font family */}
-            <div className="space-y-1">
-              <Label htmlFor="prop-font">Font</Label>
-              <Select value={selectedElement.properties.fontFamily || 'Inter'} onValueChange={updateElementFontFamily} disabled={isReadOnly}>
-                <SelectTrigger id="prop-font" className="w-full">
-                  <SelectValue placeholder="Wybierz font" />
-                </SelectTrigger>
-                <SelectContent className="max-h-60 overflow-y-auto">
-                  {AVAILABLE_FONTS.map((font) => (
-                    <SelectItem key={font} value={font} style={{fontFamily: font}}>
-                      {font}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <div className="flex gap-2">
+              {/* Font family */}
+              <div className="flex-1 space-y-1">
+                <Label htmlFor="prop-font">Font</Label>
+                <Select
+                  value={selectedElement.properties.fontFamily || 'Inter'}
+                  onValueChange={updateElementFontFamily}
+                  disabled={isReadOnly}
+                >
+                  <SelectTrigger id="prop-font" className="w-full">
+                    <SelectValue placeholder="Wybierz font" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60 overflow-y-auto">
+                    {AVAILABLE_FONTS.map((font) => (
+                      <SelectItem key={font} value={font} style={{fontFamily: font}}>
+                        {font}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Font size */}
-            <div className="space-y-1">
-              <Label htmlFor="prop-size">Rozmiar</Label>
-              <Input
-                id="prop-size"
-                type="number"
-                min={0}
-                max={1000}
-                value={(selectedElement.properties.fontSize || 24).toString()}
-                onChange={updateElementFontSize}
-                className="w-full"
-                disabled={isReadOnly}
-              />
-            </div>
+              {/* Font size */}
+              <div className="flex-1 space-y-1">
+                <Label htmlFor="prop-size">Rozmiar</Label>
+                <Input
+                  id="prop-size"
+                  type="number"
+                  min={0}
+                  max={1000}
+                  value={(selectedElement.properties.fontSize || 24).toString()}
+                  onChange={updateElementFontSize}
+                  className="w-full"
+                  disabled={isReadOnly}
+                />
+              </div>
 
-            {/* Color */}
-            <div className="space-y-1">
-              <Label htmlFor="prop-color">Kolor</Label>
-              <Input
-                id="prop-color"
-                type="color"
-                value={selectedElement.properties.fill || '#000000'}
-                onChange={updateElementColor}
-                className="h-8 w-full p-0"
-                disabled={isReadOnly}
-              />
+              {/* Color */}
+              <div className="flex-1 space-y-1">
+                <Label htmlFor="prop-color">Kolor</Label>
+                <Input
+                  id="prop-color"
+                  type="color"
+                  value={selectedElement.properties.fill || '#000000'}
+                  onChange={updateElementColor}
+                  className="h-8 w-full p-0"
+                  disabled={isReadOnly}
+                />
+              </div>
             </div>
-
             {/* Style toggles */}
             <div className="flex items-center space-x-2">
               {/* Bold */}

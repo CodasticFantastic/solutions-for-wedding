@@ -40,25 +40,11 @@ export const SaveToAccountButton = () => {
 
   return (
     <>
-      {isLoggedIn ? (
+      {isLoggedIn && (
         <Button className="w-full" onClick={handleClick} disabled={saving} variant="default">
           <SaveIcon />
           {saving ? 'Zapisywanie…' : 'Zapisz w projektach'}
         </Button>
-      ) : (
-        <Alert variant="default">
-          <AlertTitle className="flex items-center gap-2 text-lg">
-            <SaveIcon size={18} /> Zapisz projekt
-          </AlertTitle>
-          <AlertDescription>
-            Musisz być zalogowany, aby zapisać projekt w swoim koncie.
-            <Link to="/login" className="mt-2 w-full">
-              <Button className="w-full" size="sm">
-                Zaloguj się
-              </Button>
-            </Link>
-          </AlertDescription>
-        </Alert>
       )}
     </>
   )

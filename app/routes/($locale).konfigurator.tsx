@@ -5,7 +5,7 @@ import {useMemo} from 'react'
 
 const DEFAULT_TEMPLATE: AcrylicTileTemplate = generateFullTemplate({
   id: 'default-15x21',
-  name: 'Płytka 15×21',
+  name: '',
   realWidth: 14,
   realHeight: 21,
   dpi: 300,
