@@ -206,7 +206,7 @@ export const TextEditor = () => {
               {selectedElement.properties.isDynamic && (
                 <Input
                   id="prop-field-key"
-                  placeholder="Klucz pola (np. imie)"
+                  placeholder="Klucz pola (np. imie1, imie2, imie3)"
                   value={selectedElement.properties.fieldKey || ''}
                   onChange={updateElementFieldKey}
                   className="w-full"

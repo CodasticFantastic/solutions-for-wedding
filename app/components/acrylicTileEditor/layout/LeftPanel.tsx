@@ -1,22 +1,27 @@
-import {useState} from 'react'
-import {BackgroundSelector} from '../components/BackgroundSelector'
-import {NameInput} from '../components/NameInput'
-import {SizeSelector} from '../components/SizeSelector'
-import {OrientationSelector} from '../components/OrientationSelector'
 import {AddTextButton} from '../components/AddTextButton'
 import {AddImageButton} from '../components/AddImageButton'
 import {ImageLibraryButton} from '../components/ImageLibraryButton'
 import {Button} from '@/components/shadCn/ui/button'
 import {TextEditor} from '../components/TextEditor'
 import {SvgEditor} from '../components/SvgEditor'
-import {InfoIcon, SquareMousePointerIcon, EyeIcon, BanknoteIcon, PencilRulerIcon, SaveIcon} from 'lucide-react'
+import {PriceCalculator} from '../components/PriceCalculator'
+import {
+  InfoIcon,
+  EyeIcon,
+  BanknoteIcon,
+  PencilRulerIcon,
+  SaveIcon,
+  LetterTextIcon,
+  MessageCircleQuestionIcon,
+  VideoIcon,
+} from 'lucide-react'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
 import {Alert, AlertDescription, AlertTitle} from '@/components/shadCn/ui/alert'
-import {Collapsible, CollapsibleContent, CollapsibleTrigger} from '@/components/shadCn/ui/collapsible'
+import {Collapsible, CollapsibleContent} from '@/components/shadCn/ui/collapsible'
 import {Badge} from '@/components/shadCn/ui/badge'
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger} from '@/components/shadCn/ui/dialog'
 
 export const LeftPanel = () => {
-  const [selectedAction, setSelectedAction] = useState<'BASIC_INFO' | 'EDITOR'>('BASIC_INFO')
   const {isReadOnly, selectedStep, setSelectedStep, projectHasName} = useAcrylicTileEditor()
 
   return (
@@ -38,10 +43,9 @@ export const LeftPanel = () => {
 
       <p className="mb-0 text-lg font-bold">Stwórz swój projekt</p>
       <p className="mb-3 text-sm text-gray-500">
-        Wykorzystaj nasz kreator aby stworzyć swój projekt. Cała operacja jest bardzo prosta i zajmuje tylko kilka minut. Poprowadzimy Cię
-        przez cały proces.
+        Wykorzystaj nasz kreator aby stworzyć swój projekt. Cała operacja jest bardzo prosta i zajmuje tylko kilka minut.
       </p>
-      <div className="space-y-2">
+      <div className="mb-2 space-y-2">
         {/* Step 1 - Basic Info */}
         <Collapsible open={selectedStep === 'I'}>
           <Button
@@ -106,57 +110,62 @@ export const LeftPanel = () => {
             </Alert>
           </CollapsibleContent>
         </Collapsible>
-      </div>
-      {/* Step 3 - Warianty projektu*/}
-      {/* <Collapsible>
-        <CollapsibleTrigger className="flex w-full">
-          <Button variant="outline" className="flex flex-1">
-            <Badge>Krok 2</Badge>
-            Ustal wygląd projektu
+
+        {/* Step 3 - Project Variants*/}
+        <Collapsible open={selectedStep === 'III'}>
+          <Button
+            className="w-full justify-start"
+            variant={selectedStep === 'III' ? 'default' : 'outline'}
+            onClick={() => setSelectedStep('III')}
+            disabled={!projectHasName}
+          >
+            <Badge variant={selectedStep === 'III' ? 'outline' : 'default'} className={selectedStep === 'III' ? 'text-white' : ''}>
+              Krok 3
+            </Badge>
+            Ustal warianty projektu
           </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <p>xD</p>
-        </CollapsibleContent>
-      </Collapsible> */}
 
-      {/* {!isReadOnly && (
-        <>
-          <p className="mb-2 text-lg font-bold">Co chcesz edytować?</p>
-          <div className="w-full space-y-2">
-            <Button
-              variant={selectedAction === 'BASIC_INFO' ? 'default' : 'outline'}
-              onClick={() => setSelectedAction('BASIC_INFO')}
-              className="w-full"
-            >
-              <InfoIcon size={16} /> Informacje Podstawowe
-            </Button>
-            <Button
-              variant={selectedAction === 'EDITOR' ? 'default' : 'outline'}
-              onClick={() => setSelectedAction('EDITOR')}
-              className="w-full"
-            >
-              <SquareMousePointerIcon size={16} /> Elementy projektu
-            </Button>
-          </div>
-          <hr className="mt-0 mb-4" />
-        </>
-      )} */}
+          <CollapsibleContent>
+            <Alert className="mt-2" variant="info">
+              <AlertDescription className="mt-1">
+                <div className="flex items-center gap-1">
+                  <LetterTextIcon size={16} /> <strong>Zamawiasz więcej niż 1 sztukę?</strong>
+                </div>
+                Jeżeli planujesz zamówić więcej niż 1 sztukę swojego projektu, to dzięki wariantom projektu możesz stworzyć:
+                <ul>
+                  <li>zaproszenia na ślub</li>
+                  <li>karty okolicznościowe</li>
+                  <li>karty pamiątkowe</li>
+                </ul>
+                <hr className="my-2 w-full border-gray-300" />
+                <div className="flex items-center gap-1">
+                  <MessageCircleQuestionIcon size={16} /> <strong>Jak używać wariantów?</strong>
+                </div>
+                Obejrzyj nasz film instruktażowy i dowiedz się jak używać wariantów.
+                <Dialog>
+                  <DialogTrigger className="mt-2 w-full" asChild>
+                    <Button variant="outline-primary" size="sm">
+                      <VideoIcon size={16} /> Pokaż film
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Jak używać wariantów?</DialogTitle>
+                      <DialogDescription>Obejrzyj nasz film instruktażowy i dowiedz się jak używać wariantów.</DialogDescription>
+                      <div className="h-62 w-full rounded bg-gray-200" />
+                    </DialogHeader>
+                  </DialogContent>
+                </Dialog>
+              </AlertDescription>
+            </Alert>
+          </CollapsibleContent>
+        </Collapsible>
+      </div>
 
-      {selectedAction === 'EDITOR' && !isReadOnly && (
-        <>
-          <div className="space-y-2">
-            <AddTextButton />
-            <AddImageButton />
-            <ImageLibraryButton />
-          </div>
-
-          <hr className="my-4" />
-
-          <TextEditor />
-          <SvgEditor />
-        </>
-      )}
+      {/* Kalkulator cen - zawsze widoczny na dole */}
+      <div className="mt-auto">
+        <PriceCalculator />
+      </div>
     </div>
   )
 }

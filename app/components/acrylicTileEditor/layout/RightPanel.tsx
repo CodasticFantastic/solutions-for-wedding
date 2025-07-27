@@ -21,7 +21,6 @@ import {TextEditor} from '../components/TextEditor'
 import {SvgEditor} from '../components/SvgEditor'
 
 export const RightPanel = () => {
-  const [selectedAction, setSelectedAction] = useState<'ELEMENTS_LIST' | 'VARIANTS'>('ELEMENTS_LIST')
   const {isReadOnly, state, selectedStep, projectHasName, setSelectedStep} = useAcrylicTileEditor()
   const [step2View, setStep2View] = useState<'ACTIONS' | 'ELEMENTS_LIST'>('ACTIONS')
 
@@ -102,33 +101,20 @@ export const RightPanel = () => {
         </>
       )}
 
-      {/* {!isReadOnly && (
+      {/* Step 3 - Project Variants*/}
+      {selectedStep === 'III' && (!isReadOnly || hasVariants) && (
         <>
-          <p className="mb-2 text-lg font-bold">Wybierz widok</p>
-          <div className="w-full space-y-2">
-            <Button
-              variant={selectedAction === 'ELEMENTS_LIST' ? 'default' : 'outline'}
-              onClick={() => setSelectedAction('ELEMENTS_LIST')}
-              className="w-full"
-            >
-              <LayersIcon /> Warstwy projektu
-            </Button>
-            <Button
-              variant={selectedAction === 'VARIANTS' ? 'default' : 'outline'}
-              onClick={() => setSelectedAction('VARIANTS')}
-              className="w-full"
-            >
-              <LayoutTemplateIcon />
-              Warianty projektu
-            </Button>
+          <p className="mb-0 flex items-center gap-2 text-lg font-bold">
+            <Badge>Krok 3</Badge> Ustal warianty projektu
+          </p>
+          <hr className="my-2 w-full border-gray-300" />
+          <div className="overflow-y-auto">
+            <VariantsPanel />
           </div>
-          <hr className="my-4" />
         </>
-      )} */}
+      )}
 
-      {/* {selectedAction === 'ELEMENTS_LIST' && !isReadOnly && <EditorElementsList />}
-      {selectedAction === 'VARIANTS' && (!isReadOnly || hasVariants) && <VariantsPanel />} */}
-
+      {/* Right panel footer */}
       <div className="mt-auto space-y-2">
         {/* Step 1 - Basic Info */}
         {selectedStep === 'I' && (
@@ -165,12 +151,25 @@ export const RightPanel = () => {
           </>
         )}
 
+        {/* Step 3 - Project Variants*/}
+        {selectedStep === 'III' && (
+          <>
+            <hr className="my-2 w-full border-gray-300" />
+            <div className="flex gap-2">
+              <Button variant="outline-primary" className="flex-1" disabled={!projectHasName} onClick={() => setSelectedStep('II')}>
+                <ArrowLeftIcon /> Poprzedni krok
+              </Button>
+              <Button variant="outline-primary" className="flex-1" disabled={!projectHasName} onClick={() => setSelectedStep('III')}>
+                Kolejny krok <ArrowRightIcon />
+              </Button>
+            </div>
+          </>
+        )}
+
         {/* Save Project */}
         {projectHasName && <SaveToAccountButton />}
-
-        {/* <div className="bg-card rounded-lg border p-3">
-          <ProjectSizeIndicator />
-        </div> */}
+        {/* <SaveToPcButton /> */}
+        {/* <AddToCartButton /> */}
 
         {/* Przyciski zapisu */}
         {/* <div className="space-y-2">

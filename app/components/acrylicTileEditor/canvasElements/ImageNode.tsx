@@ -8,13 +8,30 @@ interface NodeProps {
   isSelected: boolean
   onSelect: () => void
   onChange: (updates: Partial<EditorImageElement>) => void
+  onTransformStart?: () => void
+  onTransformUpdate?: (transformData: {x: number; y: number; width: number; height: number; rotation: number}) => void
+  onTransformEnd?: () => void
+  onDragStart?: () => void
+  onDragUpdate?: (x: number, y: number) => void
+  onDragEnd?: () => void
 }
 
-export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) {
+export function ImageNode({
+  element,
+  isSelected,
+  onSelect,
+  onChange,
+  onTransformStart,
+  onTransformUpdate,
+  onTransformEnd,
+  onDragStart,
+  onDragUpdate,
+  onDragEnd,
+}: NodeProps) {
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
   const [imgObj, setImgObj] = useState<HTMLImageElement | null>(null)
-  const {isReadOnly} = useAcrylicTileEditor()
+  const {isReadOnly, dispatch} = useAcrylicTileEditor()
 
   useEffect(() => {
     if (element.properties.src) {
@@ -31,6 +48,63 @@ export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) 
     }
   }, [isSelected])
 
+  const handleTransformStart = () => {
+    if (onTransformStart) {
+      onTransformStart()
+    }
+  }
+
+  const handleTransformUpdate = () => {
+    if (onTransformUpdate && shapeRef.current) {
+      const node = shapeRef.current
+      onTransformUpdate({
+        x: node.x(),
+        y: node.y(),
+        width: node.width(),
+        height: node.height(),
+        rotation: node.rotation(),
+      })
+    }
+  }
+
+  const handleTransformEnd = () => {
+    const node = shapeRef.current
+    const scaleX = node.scaleX()
+    const scaleY = node.scaleY()
+    node.scaleX(1)
+    node.scaleY(1)
+    onChange({
+      x: node.x(),
+      y: node.y(),
+      width: Math.max(5, node.width() * scaleX),
+      height: Math.max(5, node.height() * scaleY),
+      rotation: node.rotation(),
+    })
+
+    if (onTransformEnd) {
+      onTransformEnd()
+    }
+  }
+
+  const handleDragStart = () => {
+    if (onDragStart) {
+      onDragStart()
+    }
+  }
+
+  const handleDragMove = (e: any) => {
+    if (onDragUpdate) {
+      onDragUpdate(e.target.x(), e.target.y())
+    }
+  }
+
+  const handleDragEnd = (e: any) => {
+    onChange({x: e.target.x(), y: e.target.y(), rotation: e.target.rotation()})
+    if (onDragEnd) {
+      onDragEnd()
+    }
+  }
+
   return (
     <>
       <KonvaImage
@@ -39,22 +113,13 @@ export function ImageNode({element, isSelected, onSelect, onChange}: NodeProps) 
         {...element}
         onClick={isReadOnly ? undefined : onSelect}
         draggable={!isReadOnly}
-        onDragEnd={isReadOnly ? undefined : (e) => onChange({x: e.target.x(), y: e.target.y()})}
-        onTransformEnd={isReadOnly ? undefined : () => {
-          const node = shapeRef.current
-          const scaleX = node.scaleX()
-          const scaleY = node.scaleY()
-          node.scaleX(1)
-          node.scaleY(1)
-          onChange({
-            x: node.x(),
-            y: node.y(),
-            width: Math.max(5, node.width() * scaleX),
-            height: Math.max(5, node.height() * scaleY),
-          })
-        }}
+        onDragStart={isReadOnly ? undefined : handleDragStart}
+        onDragMove={isReadOnly ? undefined : handleDragMove}
+        onDragEnd={isReadOnly ? undefined : handleDragEnd}
+        onTransform={isReadOnly ? undefined : handleTransformUpdate}
+        onTransformEnd={isReadOnly ? undefined : handleTransformEnd}
       />
-      {isSelected && <Transformer ref={transformerRef} />}
+      {isSelected && <Transformer ref={transformerRef} onTransformStart={isReadOnly ? undefined : handleTransformStart} />}
     </>
   )
-} 
+}

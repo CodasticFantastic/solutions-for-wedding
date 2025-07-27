@@ -9,12 +9,29 @@ interface NodeProps {
   isSelected: boolean
   onSelect: () => void
   onChange: (updates: Partial<EditorTextElement>) => void
+  onTransformStart?: () => void
+  onTransformUpdate?: (transformData: {x: number; y: number; width: number; height: number; rotation: number}) => void
+  onTransformEnd?: () => void
+  onDragStart?: () => void
+  onDragUpdate?: (x: number, y: number) => void
+  onDragEnd?: () => void
 }
 
-export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
+export function TextNode({
+  element,
+  isSelected,
+  onSelect,
+  onChange,
+  onTransformStart,
+  onTransformUpdate,
+  onTransformEnd,
+  onDragStart,
+  onDragUpdate,
+  onDragEnd,
+}: NodeProps) {
   const shapeRef = useRef<any>(null)
   const transformerRef = useRef<any>(null)
-  const {isReadOnly} = useAcrylicTileEditor()
+  const {isReadOnly, setSelectedStep, projectHasName, dispatch} = useAcrylicTileEditor()
 
   // Calculate initial dimensions if not set
   const getInitialDimensions = () => {
@@ -50,13 +67,13 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
 
     const node = shapeRef.current
     const currentWidth = node.width()
-    
+
     // Only recalculate if we have a valid width
     if (currentWidth > 0) {
       // Temporarily set height to auto to get the actual text height
       node.height('auto')
       const actualHeight = node.height()
-      
+
       // Update the element with the new height while keeping the width
       onChange({
         height: actualHeight,
@@ -71,7 +88,7 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
       const timeoutId = setTimeout(() => {
         calculateTextHeight()
       }, 0)
-      
+
       return () => clearTimeout(timeoutId)
     }
   }, [
@@ -90,7 +107,7 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
     }
   }, [isSelected, initialDimensions])
 
-  const onDragEnd = (e: Konva.KonvaEventObject<MouseEvent>) => {
+  const handleDragEndEvent = (e: Konva.KonvaEventObject<MouseEvent>) => {
     onChange({x: e.target.x(), y: e.target.y()})
   }
 
@@ -109,9 +126,20 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
 
     // Determine the height of the node
     node.height('auto')
+
+    // Notify parent about transform update
+    if (onTransformUpdate) {
+      onTransformUpdate({
+        x: node.x(),
+        y: node.y(),
+        width: newWidth,
+        height: node.height(),
+        rotation: node.rotation(),
+      })
+    }
   }
 
-  const onTransformEnd = () => {
+  const handleTransformEnd = () => {
     const node = shapeRef.current
     const scaleX = node.scaleX()
 
@@ -128,7 +156,49 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
       y: node.y(),
       width: finalWidth,
       height: finalHeight,
+      rotation: node.rotation(),
     })
+
+    // Notify parent about transform end
+    if (onTransformEnd) {
+      onTransformEnd()
+    }
+  }
+
+  const handleTransformStart = () => {
+    // Notify parent about transform start
+    if (onTransformStart) {
+      onTransformStart()
+    }
+  }
+
+  const handleDragStart = () => {
+    if (onDragStart) {
+      onDragStart()
+    }
+  }
+
+  const handleDragMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    if (onDragUpdate) {
+      onDragUpdate(e.target.x(), e.target.y())
+    }
+  }
+
+  const handleDragEnd = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    onChange({x: e.target.x(), y: e.target.y(), rotation: e.target.rotation()})
+    if (onDragEnd) {
+      onDragEnd()
+    }
+  }
+
+  const onClick = () => {
+    if (isReadOnly) return
+
+    onSelect()
+
+    if (projectHasName && isSelected) {
+      setSelectedStep('II')
+    }
   }
 
   return (
@@ -144,15 +214,18 @@ export function TextNode({element, isSelected, onSelect, onChange}: NodeProps) {
         fontStyle={element.properties.fontStyle || 'normal'}
         align={element.properties.align || 'left'}
         fill={element.properties.fill || '#000'}
-        onClick={isReadOnly ? undefined : onSelect}
+        onClick={onClick}
         draggable={!isReadOnly}
-        onDragEnd={isReadOnly ? undefined : onDragEnd}
+        onDragStart={isReadOnly ? undefined : handleDragStart}
+        onDragMove={isReadOnly ? undefined : handleDragMove}
+        onDragEnd={isReadOnly ? undefined : handleDragEnd}
         onTransform={isReadOnly ? undefined : onTransform}
-        onTransformEnd={isReadOnly ? undefined : onTransformEnd}
+        onTransformEnd={isReadOnly ? undefined : handleTransformEnd}
       />
       {isSelected && (
         <Transformer
           ref={transformerRef}
+          onTransformStart={isReadOnly ? undefined : handleTransformStart}
           anchorStyleFunc={(anchor) => {
             anchor.cornerRadius(1)
 

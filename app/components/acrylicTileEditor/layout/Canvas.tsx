@@ -8,12 +8,14 @@ import {useInitialFit} from '../hooks/useInitialFit'
 import {useCanvasGestures} from '../hooks/useCanvasGestures'
 import {TextNode} from '../canvasElements/TextNode'
 import {ImageNode} from '../canvasElements/ImageNode'
-import {RotateCcw, RotateCw} from 'lucide-react'
 import {SvgNode} from '../canvasElements/SvgNode'
+import {DeleteButton} from '../components/DeleteButton'
 import type {DynamicVariant} from '../acrylicTileEditor.types'
 
 export const Canvas = () => {
   const [isClient, setIsClient] = useState(false)
+  const [transformingElement, setTransformingElement] = useState<{id: string; x: number; y: number; width: number; height: number; rotation: number} | null>(null)
+  const [draggingElement, setDraggingElement] = useState<{id: string; x: number; y: number} | null>(null)
 
   // Prevent server side rendering for Konva
   useEffect(() => {
@@ -42,6 +44,66 @@ export const Canvas = () => {
     if (!isReadOnly) {
       dispatch({type: 'UPDATE_ELEMENT', payload: {id, updates}})
     }
+  }
+
+  // Handle real-time transformation updates
+  const handleTransformStart = (elementId: string) => {
+    const element = state.elements.find(el => el.id === elementId)
+    if (element) {
+      setTransformingElement({
+        id: elementId,
+        x: element.x || 0,
+        y: element.y || 0,
+        width: element.width || 100,
+        height: element.height || 100,
+        rotation: element.rotation || 0
+      })
+    }
+  }
+
+  const handleTransformUpdate = (elementId: string, transformData: any) => {
+    setTransformingElement(prev => {
+      if (prev && prev.id === elementId) {
+        return {
+          ...prev,
+          ...transformData
+        }
+      }
+      return prev
+    })
+  }
+
+  const handleTransformEnd = (elementId: string) => {
+    setTransformingElement(null)
+  }
+
+  // Handle drag operations
+  const handleDragStart = (elementId: string) => {
+    const element = state.elements.find(el => el.id === elementId)
+    if (element) {
+      setDraggingElement({
+        id: elementId,
+        x: element.x || 0,
+        y: element.y || 0
+      })
+    }
+  }
+
+  const handleDragUpdate = (elementId: string, x: number, y: number) => {
+    setDraggingElement(prev => {
+      if (prev && prev.id === elementId) {
+        return {
+          ...prev,
+          x,
+          y
+        }
+      }
+      return prev
+    })
+  }
+
+  const handleDragEnd = (elementId: string) => {
+    setDraggingElement(null)
   }
 
   if (!isClient) {
@@ -140,6 +202,12 @@ export const Canvas = () => {
                   isSelected={isSelected}
                   onSelect={() => handleElementSelect(el.id)}
                   onChange={(updates) => handleElementChange(el.id, updates)}
+                  onTransformStart={() => handleTransformStart(el.id)}
+                  onTransformUpdate={(transformData) => handleTransformUpdate(el.id, transformData)}
+                  onTransformEnd={() => handleTransformEnd(el.id)}
+                  onDragStart={() => handleDragStart(el.id)}
+                  onDragUpdate={(x, y) => handleDragUpdate(el.id, x, y)}
+                  onDragEnd={() => handleDragEnd(el.id)}
                 />
               )
             }
@@ -151,6 +219,12 @@ export const Canvas = () => {
                   isSelected={isSelected}
                   onSelect={() => handleElementSelect(el.id)}
                   onChange={(updates) => handleElementChange(el.id, updates)}
+                  onTransformStart={() => handleTransformStart(el.id)}
+                  onTransformUpdate={(transformData) => handleTransformUpdate(el.id, transformData)}
+                  onTransformEnd={() => handleTransformEnd(el.id)}
+                  onDragStart={() => handleDragStart(el.id)}
+                  onDragUpdate={(x, y) => handleDragUpdate(el.id, x, y)}
+                  onDragEnd={() => handleDragEnd(el.id)}
                 />
               )
             }
@@ -162,6 +236,12 @@ export const Canvas = () => {
                   isSelected={isSelected}
                   onSelect={() => handleElementSelect(el.id)}
                   onChange={(updates) => handleElementChange(el.id, updates)}
+                  onTransformStart={() => handleTransformStart(el.id)}
+                  onTransformUpdate={(transformData) => handleTransformUpdate(el.id, transformData)}
+                  onTransformEnd={() => handleTransformEnd(el.id)}
+                  onDragStart={() => handleDragStart(el.id)}
+                  onDragUpdate={(x, y) => handleDragUpdate(el.id, x, y)}
+                  onDragEnd={() => handleDragEnd(el.id)}
                 />
               )
             }
@@ -169,6 +249,61 @@ export const Canvas = () => {
           })}
         </Layer>
       </Stage>
+
+      {/* Delete buttons for selected elements */}
+      {state.selectedElementId && !isReadOnly && (() => {
+        const selectedElement = state.elements.find(el => el.id === state.selectedElementId)
+        if (!selectedElement) return null
+
+        // Apply variant overrides if needed
+        let element = selectedElement
+        if (state.activeVariantId) {
+          const variant = (state.dynamicVariants || []).find((v) => v.id === state.activeVariantId)
+          const ov = variant?.overrides?.[selectedElement.id]
+          if (ov) {
+            element = {
+              ...selectedElement,
+              ...ov,
+            } as typeof selectedElement
+          }
+        }
+
+        // Use transforming element data if available for real-time updates
+        const currentTransform = transformingElement && transformingElement.id === selectedElement.id ? transformingElement : null
+        // Use dragging element data if available for real-time updates
+        const currentDrag = draggingElement && draggingElement.id === selectedElement.id ? draggingElement : null
+
+        // Get element dimensions based on type
+        const width = currentTransform?.width || element.width || 100
+        let height = currentTransform?.height || element.height || 100
+        const rotation = currentTransform?.rotation || element.rotation || 0
+        const x = currentDrag?.x || currentTransform?.x || element.x || 0
+        const y = currentDrag?.y || currentTransform?.y || element.y || 0
+
+        // For text elements, use calculated dimensions if available
+        if (element.type === 'text') {
+          const textElement = element as any
+          if (textElement.properties?.fontSize) {
+            // Estimate height based on font size
+            height = (textElement.properties.fontSize || 124) + 20
+          }
+        }
+
+        return (
+          <DeleteButton
+            key={element.id}
+            elementId={element.id}
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            rotation={rotation}
+            canvasScale={state.canvas.scale}
+            canvasX={state.canvas.x}
+            canvasY={state.canvas.y}
+          />
+        )
+      })()}
     </div>
   )
 }

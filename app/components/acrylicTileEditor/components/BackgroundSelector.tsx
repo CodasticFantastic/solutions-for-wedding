@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@/components/shadCn/ui/select'
 import {useAcrylicTileEditor} from '../AcrylicTileEditor.context'
-import {DEFAULT_TILE_BACKGROUNDS} from '../acrylicTileEditor.config'
+import {DEFAULT_TILE_BACKGROUNDS, formatPrice} from '../acrylicTileEditor.config'
 
 /**
  * BackgroundSelector – lets the user pick one of the predefined tile backgrounds.
@@ -58,7 +58,15 @@ export const BackgroundSelector = () => {
                   backgroundPosition: 'center',
                 }}
               />
-              <span>{bg.label}</span>
+              <div className="flex items-center justify-between w-full">
+                <span>{bg.label}</span>
+                {bg.priceModifier > 0 && (
+                  <span className="text-sm text-green-600 ml-2">+{formatPrice(bg.priceModifier)}</span>
+                )}
+                {bg.priceModifier === 0 && (
+                  <span className="text-sm text-gray-500 ml-2">Bez dopłaty</span>
+                )}
+              </div>
             </SelectItem>
           ))}
         </SelectContent>
